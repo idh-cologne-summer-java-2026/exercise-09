@@ -21,4 +21,6 @@ Zur technischen Umsetzung wäre das einfachste, wenn Sie GitHub Copilot oder Ant
 - GitHub Copilot ist in der Entwicklungsumgebung [VSCode](https://code.visualstudio.com) gut integriert, wenn Sie sich dort mit Ihrem GitHub-Account anmelden.
 - [Claude Code](https://claude.com/de/product/claude-code) können Sie als separate Anwendung herunterladen und installieren, [aber auch in Eclipse installieren](https://marketplace.eclipse.org/content/claude-code-eclipse-ide). Dafür brauchen Sie einen Account, und haben vermutlich irgendwann Ihre Basis-Tokens erschöpft.
 
-Pushen Sie in jedem Fall Ihre Kreation in einem eigenen Branch.
+Wenn Sie fertig sind, überprüfen Sie, wie viel von "Ihrem" Programm Sie noch verstehen.
+
+Pushen Sie dann Ihre Kreation in einem eigenen Branch zum Server wie üblich.
