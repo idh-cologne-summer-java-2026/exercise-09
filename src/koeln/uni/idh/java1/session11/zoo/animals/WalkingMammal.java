@@ -14,28 +14,28 @@ import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
  *
  */
 public abstract class WalkingMammal implements Drawable {
-	String name;
+	public String name;
 
 	/**
 	 * the current x position of the mammal
 	 */
-	int x = 1;
+	public int x = 1;
 
 	/**
 	 * The current y position of the mammal
 	 */
-	int y = 1;
+	public int y = 1;
 	
 	/**
 	 * How far the animal walks in a single step
 	 */
-	int stepsize = 1;
+	public int stepsize = 1;
 
 	/**
 	 * The current view direction of the horse, on a 360° wheel (compass rose).
 	 * 0 => top, 90 => right, 180 => bottom, 270 => left
 	 */
-	int direction = 0;
+	public int direction = 0;
 
 	/**
 	 * The animal walks a single step in the direction in which it is looking.
