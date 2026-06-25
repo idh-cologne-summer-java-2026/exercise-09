@@ -28,6 +28,9 @@ public class Game {
 	private GameState state;
 	private boolean running = false;
 
+	private int victories = 0;
+	private int totalEp = 0;
+
 	public Game() {
 		this.input = new Input();
 		this.renderer = new Renderer(true, input.isRawMode());
@@ -51,10 +54,25 @@ public class Game {
 
 	public void setState(GameState state) {
 		this.state = state;
+		state.onEnter();
 	}
 
 	public void quit() {
 		this.running = false;
+	}
+
+	public int getVictories() {
+		return victories;
+	}
+
+	public int getTotalEp() {
+		return totalEp;
+	}
+
+	/** Verbucht einen Sieg und die dafür erhaltene Erfahrung. */
+	public void registerVictory(int ep) {
+		victories++;
+		totalEp += ep;
 	}
 
 	/** Spawnt ein neues zufälliges wildes Tier an einer freien Stelle. */

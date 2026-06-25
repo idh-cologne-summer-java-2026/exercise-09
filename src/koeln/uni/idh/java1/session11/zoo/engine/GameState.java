@@ -7,6 +7,13 @@ package koeln.uni.idh.java1.session11.zoo.engine;
  */
 public interface GameState {
 
+	/**
+	 * Wird einmal aufgerufen, sobald der Zustand aktiv wird (über
+	 * {@code game.setState(...)}). Eignet sich z. B. für eine Intro-Sequenz.
+	 */
+	default void onEnter() {
+	}
+
 	/** Zeichnet den Zustand auf den Bildschirm. */
 	void render();
 

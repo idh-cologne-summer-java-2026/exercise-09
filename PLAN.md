@@ -223,7 +223,10 @@ schaden = ( (2*level/5 + 2) * stärke * (angriff/verteidigung) / 50 + 2 )
   - ANSI-Farben, Emoji-Symbole, Statuseffekt Gift (Schaden am Rundenende),
     Stat-Senker (Wiehern/Brüllen), Wasser-Heilung als Bonus, Nachspawnen
     besiegter Tiere.
-  - Optionale Extras (Team/Fangen, Level/EP, Items) bewusst noch offen.
+  - „Juice": schrittweise Runden mit Pausen, animierte HP-Balken, kritische
+    Treffer (Volltreffer), Effektivitäts-Hinweis im Attacken-Menü,
+    Treffer-Blitz, Intro-Sequenz und Sieg-Bildschirm mit EP-/Siege-Bilanz.
+  - Optionale Extras (Team/Fangen, echtes Level-Up, Items) bewusst noch offen.
 
 ## 11. Bauen & Spielen
 ```

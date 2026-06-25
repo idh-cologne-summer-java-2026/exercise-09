@@ -8,6 +8,7 @@ import koeln.uni.idh.java1.session11.zoo.battle.Battler;
 import koeln.uni.idh.java1.session11.zoo.battle.Move;
 import koeln.uni.idh.java1.session11.zoo.battle.Status;
 import koeln.uni.idh.java1.session11.zoo.battle.Type;
+import koeln.uni.idh.java1.session11.zoo.battle.TypeChart;
 import koeln.uni.idh.java1.session11.zoo.world.Tile;
 import koeln.uni.idh.java1.session11.zoo.world.World;
 
@@ -118,7 +119,27 @@ public class Renderer {
 
 	// ---------------- Kampf ----------------
 
+	/** Normaler Kampfbildschirm: mit Attacken-Menü, wenn der Spieler dran ist. */
 	public void renderBattle(Battle battle) {
+		renderBattle(battle, null, true);
+	}
+
+	/** Intro: das wilde Tier erscheint – ohne Menü, für einen kurzen Moment. */
+	public void renderBattleIntro(Battle battle) {
+		renderBattle(battle, null, false);
+	}
+
+	/**
+	 * Frame während des Rundenablaufs: kein Menü, dafür optional ein
+	 * Treffer-Blitz auf dem gerade getroffenen Tier.
+	 *
+	 * @param flash das getroffene Tier (oder null)
+	 */
+	public void renderBattleStep(Battle battle, Battler flash) {
+		renderBattle(battle, flash, false);
+	}
+
+	private void renderBattle(Battle battle, Battler flash, boolean showMenu) {
 		Battler player = battle.getPlayer();
 		Battler enemy = battle.getEnemy();
 
@@ -127,11 +148,11 @@ public class Renderer {
 		sb.append(BOLD).append("⚔️  KAMPF").append(RESET).append("\n\n");
 
 		// Gegner oben
-		sb.append("   ").append(battlerHeader(enemy)).append('\n');
+		sb.append("   ").append(battlerHeader(enemy)).append(hitMarker(enemy, flash)).append('\n');
 		sb.append("   ").append(hpBar(enemy)).append('\n');
 		sb.append('\n');
 		// Spieler unten
-		sb.append("            ").append(battlerHeader(player)).append('\n');
+		sb.append("            ").append(battlerHeader(player)).append(hitMarker(player, flash)).append('\n');
 		sb.append("            ").append(hpBar(player)).append('\n');
 		sb.append('\n');
 
@@ -147,21 +168,66 @@ public class Renderer {
 		if (battle.isOver()) {
 			sb.append(BOLD).append(resultText(battle)).append(RESET).append('\n');
 			sb.append(GRAY).append("Taste drücken, um fortzufahren …").append(RESET).append('\n');
-		} else {
+		} else if (showMenu) {
 			sb.append(BOLD).append("Deine Attacken:").append(RESET).append('\n');
 			List<Move> moves = player.getMoves();
 			for (int i = 0; i < moves.size(); i++) {
-				Move m = moves.get(i);
 				sb.append("  ").append(YELLOW).append(i + 1).append(RESET).append(") ")
-						.append(m.getName())
-						.append(GRAY).append(" [").append(m.getType().getDisplayName())
-						.append(", Stk ").append(m.getPower())
-						.append(", Gen ").append(m.getAccuracy()).append("%]").append(RESET)
-						.append('\n');
+						.append(moveLine(moves.get(i), enemy)).append('\n');
 			}
 			sb.append("  ").append(YELLOW).append("F").append(RESET).append(") Fliehen\n");
 		}
 
+		print(sb);
+	}
+
+	/** Eine Menüzeile inkl. Hinweis auf die Typ-Effektivität gegen den Gegner. */
+	private String moveLine(Move m, Battler enemy) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(m.getName());
+		sb.append(GRAY).append(" [").append(m.getType().getDisplayName())
+				.append(", Stk ").append(m.getPower())
+				.append(", Gen ").append(m.getAccuracy()).append("%]").append(RESET);
+		if (m.getPower() > 0) {
+			double eff = TypeChart.effectiveness(m.getType(), enemy.getType());
+			if (eff > 1.0) {
+				sb.append(BRIGHT_GREEN).append(" ⚡ sehr effektiv").append(RESET);
+			} else if (eff < 1.0) {
+				sb.append(GRAY).append(" ▽ schwach").append(RESET);
+			}
+		}
+		return sb.toString();
+	}
+
+	/** Der „Treffer!"-Blitz neben dem gerade getroffenen Tier. */
+	private String hitMarker(Battler b, Battler flash) {
+		if (flash != null && flash == b) {
+			return "  " + BOLD + RED + "💥 TREFFER!" + RESET;
+		}
+		return "";
+	}
+
+	/** Sieg-Zusammenfassung: besiegtes Tier, gewonnene Erfahrung und Bilanz. */
+	public void renderVictory(Battler player, Battler enemy, int epGained, int totalEp, int victories) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(CLEAR);
+		sb.append(BOLD).append(BRIGHT_GREEN).append("🎉  SIEG!").append(RESET).append("\n\n");
+
+		sb.append("  Du hast das wilde ").append(BOLD).append(emojiFor(enemy.getSymbol()))
+				.append(enemy.getName()).append(RESET).append(" besiegt!\n\n");
+
+		sb.append("  ").append(YELLOW).append("Erfahrung erhalten:").append(RESET)
+				.append("  +").append(epGained).append(" EP\n");
+		sb.append("  ").append(GRAY).append("Gesamt-Erfahrung:").append(RESET)
+				.append("    ").append(totalEp).append(" EP\n");
+		sb.append("  ").append(GRAY).append("Siege insgesamt:").append(RESET)
+				.append("     ").append(victories).append("\n\n");
+
+		sb.append("  ").append(emojiFor(player.getSymbol())).append(player.getName())
+				.append(" ist bereit:\n");
+		sb.append("  ").append(hpBar(player)).append("\n\n");
+
+		sb.append(GRAY).append("Taste drücken, um weiterzuziehen …").append(RESET).append('\n');
 		print(sb);
 	}
 
