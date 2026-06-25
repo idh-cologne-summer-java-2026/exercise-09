@@ -25,14 +25,20 @@ public class DamageCalculator {
 		this.rng = rng;
 	}
 
-	public int calculate(Battler attacker, Battler defender, Move move) {
+	/** Wahrscheinlichkeit eines Volltreffers (1 zu CRIT_CHANCE). */
+	private static final int CRIT_CHANCE = 16;
+	private static final double CRIT_MULTIPLIER = 1.5;
+
+	public DamageResult calculate(Battler attacker, Battler defender, Move move) {
 		double effectiveness = TypeChart.effectiveness(move.getType(), defender.getType());
+		boolean critical = rng.nextInt(CRIT_CHANCE) == 0;
+		double critFactor = critical ? CRIT_MULTIPLIER : 1.0;
 		double base = (2.0 * attacker.getLevel() / 5 + 2)
 				* move.getPower()
 				* ((double) attacker.getEffectiveAttack() / defender.getEffectiveDefense())
 				/ 50 + 2;
 		double random = 0.85 + rng.nextDouble() * 0.15;
-		int damage = (int) (base * effectiveness * random);
-		return Math.max(1, damage);
+		int damage = Math.max(1, (int) (base * effectiveness * random * critFactor));
+		return new DamageResult(damage, effectiveness, critical);
 	}
 }
