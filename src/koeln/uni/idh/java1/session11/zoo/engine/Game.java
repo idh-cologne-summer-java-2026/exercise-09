@@ -30,7 +30,7 @@ public class Game {
 
 	public Game() {
 		this.input = new Input();
-		this.renderer = new Renderer(true);
+		this.renderer = new Renderer(true, input.isRawMode());
 	}
 
 	public Random getRng() {
@@ -92,7 +92,7 @@ public class Game {
 					.append(", ").append(a.getMaxHp()).append(" HP)[0m\n");
 		}
 		sb.append("\nDeine Wahl (1-").append(options.length).append("): ");
-		System.out.print(sb);
+		System.out.print(input.isRawMode() ? sb.toString().replace("\n", "\r\n") : sb.toString());
 		System.out.flush();
 
 		int choice = -1;

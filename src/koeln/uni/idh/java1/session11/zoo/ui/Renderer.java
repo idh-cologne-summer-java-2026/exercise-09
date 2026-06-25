@@ -33,13 +33,28 @@ public class Renderer {
 	private static final String WHITE = "[97m";
 
 	private final boolean useEmoji;
+	private final boolean crlf;
 
-	public Renderer(boolean useEmoji) {
+	/**
+	 * @param useEmoji ob Emoji-Symbole verwendet werden
+	 * @param rawMode  ob das Terminal im Roh-Modus läuft. Dann muss jede Zeile
+	 *                 mit \r\n enden, sonst „treppt" die Ausgabe, weil ein
+	 *                 bloßes \n den Cursor nicht an den Zeilenanfang setzt.
+	 */
+	public Renderer(boolean useEmoji, boolean rawMode) {
 		this.useEmoji = useEmoji;
+		this.crlf = rawMode;
 	}
 
 	public void clear() {
 		System.out.print(CLEAR);
+		System.out.flush();
+	}
+
+	/** Gibt einen Frame aus und übersetzt Zeilenenden passend zum Terminalmodus. */
+	private void print(StringBuilder sb) {
+		String out = crlf ? sb.toString().replace("\n", "\r\n") : sb.toString();
+		System.out.print(out);
 		System.out.flush();
 	}
 
@@ -75,8 +90,7 @@ public class Renderer {
 				.append("W/A/S/D   ")
 				.append(GRAY).append("Beenden: ").append(RESET).append("Q\n");
 		sb.append(GRAY).append("Wilde Tiere: ").append(RESET).append(wild.size()).append('\n');
-		System.out.print(sb);
-		System.out.flush();
+		print(sb);
 	}
 
 	private WalkingMammal animalAt(List<WalkingMammal> animals, int x, int y) {
@@ -148,8 +162,7 @@ public class Renderer {
 			sb.append("  ").append(YELLOW).append("F").append(RESET).append(") Fliehen\n");
 		}
 
-		System.out.print(sb);
-		System.out.flush();
+		print(sb);
 	}
 
 	private String battlerHeader(Battler b) {
