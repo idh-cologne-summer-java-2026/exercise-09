@@ -1,84 +1,130 @@
 package koeln.uni.idh.java1.session11.zoo.animals;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import koeln.uni.idh.java1.session11.zoo.battle.Battler;
+import koeln.uni.idh.java1.session11.zoo.battle.Move;
+import koeln.uni.idh.java1.session11.zoo.battle.Stats;
+import koeln.uni.idh.java1.session11.zoo.battle.Status;
+import koeln.uni.idh.java1.session11.zoo.battle.Type;
 import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
 
 /**
- * This class represents walking mammals. Walking mammals have a position (x and
- * y coordinates), a face direction, a step size (i.e., the number of units they
- * go when making a single step) and a name.
- * 
- * Walking mammals can turn and walk, and they know how they should be
- * represented in a zoo visualization.
- * 
- * @author nils.reiter@uni-koeln.de
+ * Diese Klasse repräsentiert laufende Säugetiere. Sie haben eine Position
+ * (x/y), eine Blickrichtung und eine Schrittweite und wissen, wie sie in der
+ * Zoo-Visualisierung dargestellt werden.
  *
+ * Für „Zookémon" ist die Klasse zusätzlich ein {@link Battler}: jedes Tier
+ * trägt seinen Typ, seine Werte ({@link Stats}), seine Attacken sowie die im
+ * Kampf veränderlichen Daten (aktuelle HP, Status, Stat-Stufen).
+ *
+ * @author nils.reiter@uni-koeln.de
  */
-public abstract class WalkingMammal implements Drawable {
-	String name;
+public abstract class WalkingMammal implements Drawable, Battler {
+	protected String name;
 
-	/**
-	 * the current x position of the mammal
-	 */
+	/** die aktuelle x-Position des Tieres */
 	int x = 1;
 
-	/**
-	 * The current y position of the mammal
-	 */
+	/** die aktuelle y-Position des Tieres */
 	int y = 1;
-	
-	/**
-	 * How far the animal walks in a single step
-	 */
+
+	/** wie weit das Tier in einem einzelnen Schritt läuft */
 	int stepsize = 1;
 
 	/**
-	 * The current view direction of the horse, on a 360° wheel (compass rose).
-	 * 0 => top, 90 => right, 180 => bottom, 270 => left
+	 * Aktuelle Blickrichtung auf einer 360°-Rose.
+	 * 0 => oben, 90 => rechts, 180 => links, 270 => unten
 	 */
 	int direction = 0;
 
+	// --- Kampf-Eigenschaften ---
+	protected Type type = Type.NORMAL;
+	protected Stats stats = new Stats(40, 40, 40, 40);
+	protected final List<Move> moves = new ArrayList<>();
+	protected int level = 5;
+
+	protected int currentHp;
+	protected Status status = Status.KEINER;
+	protected int attackStage = 0;
+	protected int defenseStage = 0;
+
 	/**
-	 * The animal walks a single step in the direction in which it is looking.
+	 * Richtet die Kampf-Eigenschaften eines Tieres ein. Wird von den
+	 * Unterklassen im Konstruktor aufgerufen. Setzt die HP auf das Maximum.
+	 */
+	protected void setupBattler(String name, Type type, Stats stats, Move... moves) {
+		this.name = name;
+		this.type = type;
+		this.stats = stats;
+		this.moves.clear();
+		this.moves.addAll(Arrays.asList(moves));
+		this.currentHp = stats.getMaxHp();
+	}
+
+	/**
+	 * Das Tier läuft einen einzelnen Schritt in seine Blickrichtung. Wird in
+	 * der Overworld nicht direkt genutzt – dort prüft die Welt vorher mit
+	 * {@link #peekStep()}, ob das Zielfeld begehbar ist.
 	 */
 	public void walk() {
+		int[] next = peekStep();
+		this.x = next[0];
+		this.y = next[1];
+	}
 
+	/**
+	 * Berechnet das Zielfeld eines Schrittes, ohne die Position zu verändern.
+	 *
+	 * @return ein Array {neuesX, neuesY}
+	 */
+	public int[] peekStep() {
+		int nx = x;
+		int ny = y;
 		switch (direction) {
 		case 0:
-			this.y = this.y - stepsize;
-			break;
-		case 180:
-			this.x = this.x - stepsize;
-			break;
-		case 270:
-			this.y = this.y + stepsize;
+			ny = y - stepsize;
 			break;
 		case 90:
-			this.x = this.x + stepsize;
+			nx = x + stepsize;
+			break;
+		case 180:
+			nx = x - stepsize;
+			break;
+		case 270:
+			ny = y + stepsize;
+			break;
+		default:
+			break;
 		}
-		System.out.println("Animal has moved.");
+		return new int[] { nx, ny };
 	}
 
 	/**
-	 * This method calculates the new direction by taking the sign of the argument
-	 * with Math.signum(), multiplying that with 90 and add it to the old direction
-	 * value. To avoid that we produce direction values > 360, we take the modulo of
-	 * 360.
-	 * 
-	 * @param turnDirection If the argument is a negative number, the animal turns
-	 *                      to the left. If it's positive number, it turns to the
-	 *                      right.
+	 * Dreht das Tier nach links (negativ) oder rechts (positiv). Das Ergebnis
+	 * wird sauber auf den Bereich 0..359 normalisiert (behebt den früheren
+	 * Modulo-Bug).
+	 *
+	 * @param turnDirection negativ = nach links, positiv = nach rechts
 	 */
 	public void turn(int turnDirection) {
-		this.direction = (int) (this.direction + (Math.signum(turnDirection) * 90) % 360);
-		System.out.println("Animal " + name + " has turned and is now looking towards " + direction + ".");
+		int delta = (int) Math.signum(turnDirection) * 90;
+		this.direction = ((this.direction + delta) % 360 + 360) % 360;
+	}
 
+	public void setDirection(int direction) {
+		this.direction = ((direction % 360) + 360) % 360;
+	}
+
+	public int getDirection() {
+		return direction;
 	}
 
 	/**
-	 * How to represent the animal on the zoo field. Note that this is not an
-	 * individual animal, but one that symbolizes the class of the animal.
-	 * 
-	 * @return A character used to represent the animal
+	 * Wie das Tier auf dem Zoo-Feld dargestellt wird (klassenweit, kein
+	 * individuelles Tier).
 	 */
 	public abstract char getSymbol();
 
@@ -98,4 +144,109 @@ public abstract class WalkingMammal implements Drawable {
 		this.y = y;
 	}
 
+	// --- Battler-Implementierung ---
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public Type getType() {
+		return type;
+	}
+
+	@Override
+	public Stats getStats() {
+		return stats;
+	}
+
+	@Override
+	public List<Move> getMoves() {
+		return moves;
+	}
+
+	@Override
+	public int getLevel() {
+		return level;
+	}
+
+	@Override
+	public int getCurrentHp() {
+		return currentHp;
+	}
+
+	@Override
+	public void setCurrentHp(int hp) {
+		this.currentHp = Math.max(0, Math.min(hp, getMaxHp()));
+	}
+
+	@Override
+	public int getMaxHp() {
+		return stats.getMaxHp();
+	}
+
+	@Override
+	public Status getStatus() {
+		return status;
+	}
+
+	@Override
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	@Override
+	public boolean isFainted() {
+		return currentHp <= 0;
+	}
+
+	@Override
+	public int getEffectiveAttack() {
+		return Math.max(1, (int) (stats.getAttack() * stageMultiplier(attackStage)));
+	}
+
+	@Override
+	public int getEffectiveDefense() {
+		return Math.max(1, (int) (stats.getDefense() * stageMultiplier(defenseStage)));
+	}
+
+	@Override
+	public void lowerAttack() {
+		if (attackStage > -6) {
+			attackStage--;
+		}
+	}
+
+	@Override
+	public void lowerDefense() {
+		if (defenseStage > -6) {
+			defenseStage--;
+		}
+	}
+
+	/** Stellt HP, Status und Stat-Stufen vollständig wieder her. */
+	public void restore() {
+		this.currentHp = getMaxHp();
+		clearBattleModifiers();
+	}
+
+	/**
+	 * Setzt die nur im Kampf gültigen Veränderungen zurück (Status-Effekte und
+	 * Stat-Stufen), behält aber die aktuellen HP. Wird nach jedem Kampf
+	 * aufgerufen.
+	 */
+	public void clearBattleModifiers() {
+		this.status = Status.KEINER;
+		this.attackStage = 0;
+		this.defenseStage = 0;
+	}
+
+	/** Pokémon-artiger Stufen-Multiplikator (-6..+6). */
+	private static double stageMultiplier(int stage) {
+		if (stage >= 0) {
+			return (2.0 + stage) / 2.0;
+		}
+		return 2.0 / (2.0 - stage);
+	}
 }

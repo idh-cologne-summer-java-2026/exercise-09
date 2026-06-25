@@ -4,16 +4,16 @@ import koeln.uni.idh.java1.session11.zoo.battle.Move;
 import koeln.uni.idh.java1.session11.zoo.battle.Stats;
 import koeln.uni.idh.java1.session11.zoo.battle.Type;
 
-public class Elephant extends WalkingMammal {
+public class Crocodile extends WalkingMammal {
 
-	public Elephant() {
-		setupBattler("Elefant", Type.ERDE, new Stats(80, 60, 70, 25),
-				new Move("Stampfer", Type.ERDE, 50, 90),
-				new Move("Rüsselschlag", Type.NORMAL, 40, 100));
+	public Crocodile() {
+		setupBattler("Krokodil", Type.WASSER, new Stats(60, 65, 60, 35),
+				new Move("Wasserstoß", Type.WASSER, 45, 95),
+				new Move("Todesrolle", Type.WASSER, 55, 75));
 	}
 
 	@Override
 	public char getSymbol() {
-		return 'E';
+		return 'K';
 	}
 }
