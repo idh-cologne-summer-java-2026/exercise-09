@@ -136,7 +136,12 @@ public class Renderer {
 
 	private static final int DIALOGUE_WIDTH = 56;
 
-	/** Eine Dialog-Textbox mit Sprecher (oder null = Erzähler) und Weiter-Hinweis. */
+	/**
+	 * Eine Dialog-Textbox mit Sprecher (oder null = Erzähler) und Weiter-Hinweis.
+	 * Bewusst nur mit linker Kante und oberer/unterer Linie (wie das Kampf-Log):
+	 * So gibt es keine rechte Kante, die sich an Sonderzeichen verschieben könnte –
+	 * die Box sitzt in jedem Terminal sauber.
+	 */
 	public void renderDialogue(String speaker, String text, boolean hasMore) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(CLEAR);
@@ -144,14 +149,12 @@ public class Renderer {
 		if (speaker != null) {
 			sb.append("  ").append(BOLD).append(MAGENTA).append(speaker).append(":").append(RESET).append('\n');
 		}
-		sb.append("  ").append(GRAY).append("┌").append(repeat('─', DIALOGUE_WIDTH + 2)).append("┐")
-				.append(RESET).append('\n');
+		String rule = repeat('─', DIALOGUE_WIDTH);
+		sb.append("  ").append(GRAY).append("┌").append(rule).append(RESET).append('\n');
 		for (String line : wrap(text, DIALOGUE_WIDTH)) {
-			sb.append("  ").append(GRAY).append("│ ").append(RESET).append(padRight(line, DIALOGUE_WIDTH))
-					.append(GRAY).append(" │").append(RESET).append('\n');
+			sb.append("  ").append(GRAY).append("│ ").append(RESET).append(line).append('\n');
 		}
-		sb.append("  ").append(GRAY).append("└").append(repeat('─', DIALOGUE_WIDTH + 2)).append("┘")
-				.append(RESET).append("\n\n");
+		sb.append("  ").append(GRAY).append("└").append(rule).append(RESET).append("\n\n");
 		sb.append("  ").append(GRAY)
 				.append(hasMore ? "Taste drücken für weiter ▼" : "Taste drücken …")
 				.append(RESET).append('\n');
@@ -176,13 +179,6 @@ public class Renderer {
 		return lines;
 	}
 
-	private String padRight(String s, int width) {
-		if (s.length() >= width) {
-			return s;
-		}
-		return s + repeat(' ', width - s.length());
-	}
-
 	/** Die Starter-Auswahl: drei wählbare Zookémon mit Typ und HP. */
 	public void renderStarterSelect(WalkingMammal[] options) {
 		StringBuilder sb = new StringBuilder();
@@ -205,9 +201,10 @@ public class Renderer {
 	public void renderEnding(WalkingMammal champion, String bossName, int victories) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(CLEAR).append("\n\n");
-		sb.append(BOLD).append(MAGENTA).append("  ✨🏆  S I E G  🏆✨").append(RESET).append("\n\n\n");
+		sb.append(BOLD).append(MAGENTA).append("  ✨💥  W E L T   Z E R S T Ö R T  💥✨").append(RESET).append("\n\n\n");
 		sb.append("  Du hast ").append(BOLD).append(bossName).append(RESET)
-				.append(" besiegt und bist der wahre Zookémon-Meister!\n\n");
+				.append(" besiegt! Die ASCII-Welt zerfällt um dich herum –\n");
+		sb.append("  deine Java-Fähigkeiten haben dich befreit. Du bist frei!\n\n");
 		sb.append("  ").append(emojiFor(champion.getSymbol())).append(BOLD).append(champion.getName())
 				.append(RESET);
 		if (champion.isEvolved()) {

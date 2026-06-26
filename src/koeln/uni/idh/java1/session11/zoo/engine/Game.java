@@ -157,9 +157,12 @@ public class Game {
 	 */
 	private GameState introDialogue() {
 		List<Page> pages = Arrays.asList(
-				new Page("Prof. Nils", "Ah, endlich bist du da! Willkommen in meinem Zoo voller Zookémon."),
-				new Page("Prof. Nils", "Such dir ein Zookémon aus – es wird dein treuer Begleiter."),
-				new Page(null, "(Platzhalter: Hier kommt später mehr Geschichte hin.)"));
+				new Page("Prof. Nils", "Willkommen in meiner ASCII-Welt, kleiner Programmierer. "
+						+ "Tief in den Eingeweiden von Java bist du nun gefangen."),
+				new Page("Prof. Nils", "Ich lasse dich nicht eher hinaus, bis du deine Java-Fähigkeiten "
+						+ "so weit trainiert hast, dass du mich besiegen kannst."),
+				new Page("Prof. Nils", "Nur dann zerfällt diese Welt – und du wirst frei sein. "
+						+ "Wähle ein Zookémon, dein Werkzeug zur Zerstörung dieser Welt!"));
 		return new DialogueState(this, pages, () -> setState(new StarterSelectState(this)));
 	}
 
@@ -184,11 +187,13 @@ public class Game {
 	/** Der Moment, in dem Prof. Nils sich zum Erzfeind erklärt. (Platzhalter-Texte.) */
 	private GameState rivalRevealDialogue(String starterName, String rivalName) {
 		List<Page> pages = Arrays.asList(
-				new Page("Prof. Nils", "Eine gute Wahl. " + starterName + " passt zu dir."),
-				new Page("Prof. Nils", "Dann nehme ich eben " + rivalName
-						+ " – das ist deinem Zookémon haushoch überlegen!"),
-				new Page("Prof. Nils", "Von nun an sind wir Rivalen. Werde stark – wenn du kannst!"),
-				new Page(null, "Prof. Nils wartet in seiner Arena (Symbol N). Besiege ihn, um zu gewinnen!"));
+				new Page("Prof. Nils", starterName + "? Eine mutige Wahl für einen Gefangenen."),
+				new Page("Prof. Nils", "Dann nehme ich " + rivalName
+						+ " – genau das Richtige, um dich an deiner Bestimmung zu hindern."),
+				new Page("Prof. Nils", "Trainiere, werde stark. Besiegst du mich je, reißt du diese "
+						+ "Java-Welt mit in den Abgrund. Bis dahin bleibst du mein Gefangener!"),
+				new Page(null, "Finde Prof. Nils in seiner Festung (Symbol N). "
+						+ "Besiege ihn, um die Welt zu zerstören und zu entkommen!"));
 		return new DialogueState(this, pages, this::beginAdventure);
 	}
 
@@ -204,8 +209,9 @@ public class Game {
 	 */
 	public GameState bossEncounterDialogue() {
 		List<Page> pages = Arrays.asList(
-				new Page("Prof. Nils", "Du wagst es, mich herauszufordern?"),
-				new Page("Prof. Nils", "Zeig mir, ob du stark genug geworden bist!"));
+				new Page("Prof. Nils", "Du wagst es, in meine Festung einzudringen?"),
+				new Page("Prof. Nils", "Zeig mir, ob deine Java-Fähigkeiten reichen, "
+						+ "um diese Welt zu zerstören!"));
 		return new DialogueState(this, pages, this::startBossBattle);
 	}
 

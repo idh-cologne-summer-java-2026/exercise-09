@@ -8,9 +8,12 @@ läufst du in eines hinein, startet ein **rundenbasierter Pokémon-Kampf**: Jede
 Tier hat HP, Werte, einen Typ und Attacken. Typ-Effektivität und etwas Zufall
 entscheiden über den Schaden. Wer zuerst auf 0 HP fällt, verliert.
 
-**Ziel des Spiels:** Besiege den Erzfeind **Prof. Nils** (Symbol `N`). Er hat
-sich genau das Zookémon geschnappt, das gegen dein Starter-Zookémon stark ist.
-Werde durch Kämpfe und Fangen stärker, bis du ihn schlagen kannst!
+**Story & Ziel:** Prof. Nils hat dich in seiner **ASCII-Welt** gefangen. Er lässt
+dich erst frei, wenn du deine Java-Fähigkeiten so weit trainiert hast, dass du
+ihn besiegen und diese **Java-Welt zerstören** kannst. Er hat sich genau das
+Zookémon geschnappt, das gegen dein Starter-Zookémon stark ist. Werde durch
+Kämpfe und Fangen stärker, bis du ihn in seiner Festung (Symbol `N`) schlägst –
+dann zerfällt die Welt und du bist frei!
 
 ## Starten
 ```
