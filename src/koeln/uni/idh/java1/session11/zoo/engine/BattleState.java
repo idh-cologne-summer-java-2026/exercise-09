@@ -362,7 +362,7 @@ public class BattleState implements GameState {
 		case GEFANGEN:
 			// Gefangenes Tier kommt geheilt ins Team, ein neues erscheint.
 			enemy.restore();
-			team.add(enemy);
+			game.addCaughtAnimal(enemy);
 			game.getWorld().removeWildAnimal(enemy);
 			game.spawnWildAnimal();
 			game.setState(new OverworldState(game));

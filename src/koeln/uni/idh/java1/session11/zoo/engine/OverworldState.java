@@ -2,6 +2,7 @@ package koeln.uni.idh.java1.session11.zoo.engine;
 
 import koeln.uni.idh.java1.session11.zoo.animals.WalkingMammal;
 import koeln.uni.idh.java1.session11.zoo.battle.Battle;
+import koeln.uni.idh.java1.session11.zoo.world.Npc;
 import koeln.uni.idh.java1.session11.zoo.world.Player;
 import koeln.uni.idh.java1.session11.zoo.world.Tile;
 import koeln.uni.idh.java1.session11.zoo.world.World;
@@ -56,6 +57,13 @@ public class OverworldState implements GameState {
 		int[] target = player.peekStep();
 		if (world.isBossAt(target[0], target[1])) {
 			game.setState(game.bossEncounterDialogue());
+			return;
+		}
+
+		// Genauso spricht man die freundlichen NPCs an, statt auf sie zu treten.
+		Npc npc = world.npcAt(target[0], target[1]);
+		if (npc != null) {
+			game.setState(game.npcDialogue(npc));
 			return;
 		}
 

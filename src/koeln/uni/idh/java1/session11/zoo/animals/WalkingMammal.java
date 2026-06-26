@@ -335,6 +335,16 @@ public abstract class WalkingMammal implements Drawable, Battler {
 		evolved = true;
 	}
 
+	/**
+	 * Hebt die Basiswerte dauerhaft an – z. B. durch den Buff eines NPC. Zusätzliche
+	 * maximale HP gibt es sofort als geheilte HP obendrauf.
+	 */
+	public void applyPermanentBuff(int hpUp, int atkUp, int defUp, int spdUp) {
+		stats = new Stats(stats.getMaxHp() + hpUp, stats.getAttack() + atkUp,
+				stats.getDefense() + defUp, stats.getSpeed() + spdUp);
+		currentHp += hpUp;
+	}
+
 	/** Stellt HP, Status und Stat-Stufen vollständig wieder her. */
 	public void restore() {
 		this.currentHp = getMaxHp();

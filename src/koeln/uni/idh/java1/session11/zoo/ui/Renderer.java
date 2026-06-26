@@ -10,6 +10,8 @@ import koeln.uni.idh.java1.session11.zoo.battle.Move;
 import koeln.uni.idh.java1.session11.zoo.battle.Status;
 import koeln.uni.idh.java1.session11.zoo.battle.Type;
 import koeln.uni.idh.java1.session11.zoo.battle.TypeChart;
+import koeln.uni.idh.java1.session11.zoo.world.Npc;
+import koeln.uni.idh.java1.session11.zoo.world.NpcKind;
 import koeln.uni.idh.java1.session11.zoo.world.Tile;
 import koeln.uni.idh.java1.session11.zoo.world.World;
 
@@ -82,6 +84,12 @@ public class Renderer {
 					sb.append(BOLD).append(MAGENTA).append('N').append(RESET);
 					continue;
 				}
+				Npc npc = world.npcAt(x, y);
+				if (npc != null) {
+					sb.append(BOLD).append(npcColor(npc.getKind()))
+							.append(npc.getGlyph()).append(RESET);
+					continue;
+				}
 				WalkingMammal animal = animalAt(wild, x, y);
 				if (animal != null) {
 					// Farbe nach Level (nicht Typ): so erkennt man auf der Karte,
@@ -114,6 +122,15 @@ public class Renderer {
 				.append(CYAN).append("10-19 ").append(RESET)
 				.append(YELLOW).append("20-29 ").append(RESET)
 				.append(RED).append("30+").append(RESET).append('\n');
+		// Legende der freundlichen NPCs (sofern welche da sind).
+		if (!world.getNpcs().isEmpty()) {
+			sb.append(GRAY).append("NPCs: ").append(RESET);
+			for (Npc npc : world.getNpcs()) {
+				sb.append(BOLD).append(npcColor(npc.getKind())).append(npc.getGlyph())
+						.append(RESET).append(' ').append(npcLabel(npc.getKind())).append("  ");
+			}
+			sb.append('\n');
+		}
 		print(sb);
 	}
 
@@ -593,6 +610,28 @@ public class Renderer {
 			return YELLOW;
 		}
 		return RED;
+	}
+
+	/** Farbe eines NPC auf der Karte – bewusst andere Töne als Tiere/Boss. */
+	private String npcColor(NpcKind kind) {
+		switch (kind) {
+		case KOMMILITONE:
+			return CYAN;
+		case KI:
+		default:
+			return WHITE;
+		}
+	}
+
+	/** Kurzbezeichnung eines NPC für die Karten-Legende. */
+	private String npcLabel(NpcKind kind) {
+		switch (kind) {
+		case KOMMILITONE:
+			return "Kommilitone";
+		case KI:
+		default:
+			return "K.I.";
+		}
 	}
 
 	private String typeColor(Type type) {

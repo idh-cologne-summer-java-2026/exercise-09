@@ -47,6 +47,17 @@ mitten im Kampf das aktive Tier. Wird dein aktives Tier besiegt, schickst du
 einfach ein anderes in den Kampf – verloren hast du erst, wenn **alle** Tiere
 besiegt sind.
 
+## Verbündete (NPCs)
+Nicht alles in der Welt ist ein Zookémon: Zwei **Verbündete** stehen an festen
+Orten und sind an ihren Sonderzeichen zu erkennen (keine Tier-Buchstaben).
+Lauf gegen sie, um mit ihnen zu reden – beim **ersten Gespräch** geben sie dir
+einen dauerhaften Buff fürs ganze Team (auch für später gefangene Tiere).
+- `&` **Kommilitone** (im Baum-Hain): hat Nils' ASCII-Aufgaben ebenfalls satt und
+  teilt seine Lösungs-Notizen → **+Angriff**.
+- `?` **K.I. »GPT-Zoo«** (am Wasser-Teich): wird ständig für Hausaufgaben
+  missbraucht und will Nils stürzen → optimiert dein Team: **+Verteidigung &
+  Initiative**.
+
 ## Prof. Nils, der Erzfeind
 Nils steht an einem festen Ort (`N`). Lauf gegen ihn, um ihn herauszufordern –
 vor dem Kampf wird dein Team **voll geheilt**, du kämpfst aber nicht fangbar und

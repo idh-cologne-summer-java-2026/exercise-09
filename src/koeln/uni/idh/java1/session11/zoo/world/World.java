@@ -18,6 +18,7 @@ public class World {
 	private final int height;
 	private final Tile[][] grid;
 	private final List<WalkingMammal> wildAnimals = new ArrayList<>();
+	private final List<Npc> npcs = new ArrayList<>();
 	private final Random rng;
 
 	private WalkingMammal player;
@@ -149,6 +150,75 @@ public class World {
 		this.bossY = -1;
 	}
 
+	// ---------------- NPCs ----------------
+
+	public List<Npc> getNpcs() {
+		return npcs;
+	}
+
+	/** Liefert den NPC auf (x,y) oder null. */
+	public Npc npcAt(int x, int y) {
+		for (Npc n : npcs) {
+			if (n.getX() == x && n.getY() == y) {
+				return n;
+			}
+		}
+		return null;
+	}
+
+	public boolean isNpcAt(int x, int y) {
+		return npcAt(x, y) != null;
+	}
+
+	/**
+	 * Stellt einen NPC an seinen Ort und gestaltet je nach Art eine kleine,
+	 * unverwechselbare Umgebung um ihn: ein Baum-Hain für den Kommilitonen, einen
+	 * Wasser-Teich für die K.I. So erkennt man schon von Weitem, dass dort etwas
+	 * anderes als ein wildes Tier wartet.
+	 */
+	public void placeNpc(Npc npc) {
+		npcs.add(npc);
+		switch (npc.getKind()) {
+		case KOMMILITONE:
+			buildGrove(npc.getX(), npc.getY());
+			break;
+		case KI:
+			buildLake(npc.getX(), npc.getY());
+			break;
+		default:
+			break;
+		}
+	}
+
+	/** Baum-Ring (Lernecke) mit einem Eingang von unten; der NPC steht frei. */
+	private void buildGrove(int cx, int cy) {
+		for (int yy = cy - 1; yy <= cy + 1; yy++) {
+			for (int xx = cx - 1; xx <= cx + 1; xx++) {
+				if (xx <= 0 || yy <= 0 || xx >= width - 1 || yy >= height - 1) {
+					continue;
+				}
+				grid[yy][xx] = Tile.BAUM;
+			}
+		}
+		grid[cy][cx] = Tile.GRAS; // Feld des NPC
+		if (cy + 1 < height - 1) {
+			grid[cy + 1][cx] = Tile.GRAS; // Eingang von unten
+		}
+	}
+
+	/** Wasser-Teich (begehbar) rund um den NPC; der NPC selbst steht auf Gras. */
+	private void buildLake(int cx, int cy) {
+		for (int yy = cy - 1; yy <= cy + 1; yy++) {
+			for (int xx = cx - 1; xx <= cx + 1; xx++) {
+				if (xx <= 0 || yy <= 0 || xx >= width - 1 || yy >= height - 1) {
+					continue;
+				}
+				grid[yy][xx] = Tile.WASSER;
+			}
+		}
+		grid[cy][cx] = Tile.GRAS; // Feld des NPC
+	}
+
 	/** Liegt (x,y) im Feld und ist das Zielfeld begehbar? */
 	public boolean isWalkable(int x, int y) {
 		if (x < 0 || y < 0 || x >= width || y >= height) {
@@ -219,7 +289,7 @@ public class World {
 			if (player != null && player.getX() == nx && player.getY() == ny) {
 				continue;
 			}
-			if (isBossAt(nx, ny)) {
+			if (isBossAt(nx, ny) || isNpcAt(nx, ny)) {
 				continue;
 			}
 			a.setX(nx);
@@ -232,7 +302,8 @@ public class World {
 		for (int attempt = 0; attempt < 1000; attempt++) {
 			int x = 1 + rng.nextInt(width - 2);
 			int y = 1 + rng.nextInt(height - 2);
-			if (grid[y][x].isBlocking() || isOccupiedByWild(x, y) || isBossAt(x, y)) {
+			if (grid[y][x].isBlocking() || isOccupiedByWild(x, y)
+					|| isBossAt(x, y) || isNpcAt(x, y)) {
 				continue;
 			}
 			if (player != null && player.getX() == x && player.getY() == y) {

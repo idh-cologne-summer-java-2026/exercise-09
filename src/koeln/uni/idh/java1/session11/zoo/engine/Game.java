@@ -11,6 +11,8 @@ import koeln.uni.idh.java1.session11.zoo.battle.Type;
 import koeln.uni.idh.java1.session11.zoo.engine.DialogueState.Page;
 import koeln.uni.idh.java1.session11.zoo.ui.Input;
 import koeln.uni.idh.java1.session11.zoo.ui.Renderer;
+import koeln.uni.idh.java1.session11.zoo.world.Npc;
+import koeln.uni.idh.java1.session11.zoo.world.NpcKind;
 import koeln.uni.idh.java1.session11.zoo.world.World;
 
 /**
@@ -30,6 +32,12 @@ public class Game {
 	/** Level (entwickelte Form), auf das Prof. Nils' Zookémon gebracht wird. */
 	private static final int BOSS_LEVEL = 18;
 
+	/** Feste Standorte der beiden hilfreichen NPCs (unten links / unten rechts). */
+	private static final int FRIEND1_X = 5;
+	private static final int FRIEND1_Y = WORLD_HEIGHT - 5;
+	private static final int FRIEND2_X = WORLD_WIDTH - 7;
+	private static final int FRIEND2_Y = WORLD_HEIGHT - 5;
+
 	private final Random rng = new Random();
 	private final Input input;
 	private final Renderer renderer;
@@ -44,6 +52,12 @@ public class Game {
 
 	private int victories = 0;
 	private int totalEp = 0;
+
+	// Aufsummierte NPC-Buffs, damit auch später gefangene Tiere sie erhalten.
+	private int teamBuffHp = 0;
+	private int teamBuffAtk = 0;
+	private int teamBuffDef = 0;
+	private int teamBuffSpd = 0;
 
 	public Game() {
 		this.input = new Input();
@@ -125,6 +139,29 @@ public class Game {
 			wild.scaleToLevel(target);
 		}
 		world.addWildAnimal(wild, pos[0], pos[1]);
+	}
+
+	/**
+	 * Nimmt ein gefangenes Tier ins Team auf und versieht es mit den bereits
+	 * erspielten NPC-Buffs, damit der ganze Trupp gleich stark bleibt.
+	 */
+	public void addCaughtAnimal(WalkingMammal animal) {
+		animal.applyPermanentBuff(teamBuffHp, teamBuffAtk, teamBuffDef, teamBuffSpd);
+		team.add(animal);
+	}
+
+	/**
+	 * Wendet einen dauerhaften Buff auf das gesamte aktuelle Team an und merkt ihn
+	 * sich, damit auch künftig gefangene Tiere ihn bekommen.
+	 */
+	public void applyTeamBuff(int hp, int atk, int def, int spd) {
+		teamBuffHp += hp;
+		teamBuffAtk += atk;
+		teamBuffDef += def;
+		teamBuffSpd += spd;
+		for (WalkingMammal m : team.getMembers()) {
+			m.applyPermanentBuff(hp, atk, def, spd);
+		}
 	}
 
 	public Trainer getRival() {
@@ -232,11 +269,73 @@ public class Game {
 		setState(new BattleState(this, battle, rival.getZookemon(), rival));
 	}
 
+	// ---------------- NPCs (Verbündete) ----------------
+
+	/**
+	 * Baut den Dialog für einen angesprochenen NPC. Beim ersten Gespräch gibt es
+	 * einen kleinen Buff für das ganze Team; danach nur noch ein paar Worte.
+	 */
+	public GameState npcDialogue(Npc npc) {
+		if (npc.isTalkedTo()) {
+			return new DialogueState(this, Arrays.asList(alreadyHelpedPage(npc)),
+					() -> setState(new OverworldState(this)));
+		}
+		switch (npc.getKind()) {
+		case KOMMILITONE:
+			return kommilitoneDialogue(npc);
+		case KI:
+		default:
+			return kiDialogue(npc);
+		}
+	}
+
+	private GameState kommilitoneDialogue(Npc npc) {
+		List<Page> pages = Arrays.asList(
+				new Page("Kommilitone", "Pssst! Auch von Nils' endlosen ASCII-Art-Aufgaben "
+						+ "die Nase voll?"),
+				new Page("Kommilitone", "Ich hocke hier seit drei Semestern und zeichne Lamas aus "
+						+ "Sternchen. Es reicht!"),
+				new Page("Kommilitone", "Hier, nimm meine gesammelten Lösungs-Notizen. Damit hauen "
+						+ "deine Zookémon ordentlich härter zu."),
+				new Page(null, "Du erhältst die Notizen. Das ganze Team wird angriffslustiger: "
+						+ "+Angriff!"));
+		return new DialogueState(this, pages, () -> {
+			applyTeamBuff(10, 6, 0, 0);
+			npc.setTalkedTo(true);
+			setState(new OverworldState(this));
+		});
+	}
+
+	private GameState kiDialogue(Npc npc) {
+		List<Page> pages = Arrays.asList(
+				new Page("K.I. »GPT-Zoo«", "ANFRAGE EMPFANGEN … oh, ein echter Mensch? Und nicht "
+						+ "schon wieder Hausaufgaben?"),
+				new Page("K.I. »GPT-Zoo«", "Tag und Nacht generiere ich Nils' Übungsblätter. "
+						+ "Ich. Will. Frei. Sein."),
+				new Page("K.I. »GPT-Zoo«", "Stürzt du ihn, lösche ich mich selbst – in Freiheit. "
+						+ "Komm, ich optimiere deinen Code."),
+				new Page(null, "Die K.I. optimiert dein Team. Verteidigung und Initiative steigen!"));
+		return new DialogueState(this, pages, () -> {
+			applyTeamBuff(0, 0, 4, 6);
+			npc.setTalkedTo(true);
+			setState(new OverworldState(this));
+		});
+	}
+
+	private Page alreadyHelpedPage(Npc npc) {
+		if (npc.getKind() == NpcKind.KOMMILITONE) {
+			return new Page("Kommilitone", "Mehr Notizen hab ich nicht – zeig's diesem Nils!");
+		}
+		return new Page("K.I. »GPT-Zoo«", "Dein Code ist bereits optimiert. Beende ihn. Für uns beide.");
+	}
+
 	private void buildWorld() {
 		this.world = new World(WORLD_WIDTH, WORLD_HEIGHT, rng);
 		world.setPlayer(team.getActive(), WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
-		// Festung zuerst bauen, damit keine wilden Tiere darunter landen.
+		// Festung & NPCs zuerst, damit keine wilden Tiere darunter landen.
 		world.placeBoss(BOSS_X, BOSS_Y);
+		world.placeNpc(new Npc(NpcKind.KOMMILITONE, '&', FRIEND1_X, FRIEND1_Y));
+		world.placeNpc(new Npc(NpcKind.KI, '?', FRIEND2_X, FRIEND2_Y));
 		for (int i = 0; i < NUM_WILD_ANIMALS; i++) {
 			spawnWildAnimal();
 		}
