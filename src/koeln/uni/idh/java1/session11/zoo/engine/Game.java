@@ -114,7 +114,14 @@ public class Game {
 		int[] pos = world.randomFreeTile();
 		WalkingMammal wild = AnimalFactory.randomWild(rng);
 		if (team.size() > 0) {
-			int target = Math.max(5, getPlayer().getLevel() + rng.nextInt(3) - 1);
+			int playerLevel = getPlayer().getLevel();
+			int target = Math.max(5, playerLevel + rng.nextInt(3) - 1);
+			// Je höher das eigene Level, desto häufiger taucht ein deutlich
+			// stärkeres Tier auf (gedeckelt bei 50 %, ab ~Lv 25 erreicht).
+			double strongChance = Math.min(0.5, playerLevel * 0.02);
+			if (rng.nextDouble() < strongChance) {
+				target += 2 + rng.nextInt(4); // +2..+5 Level obendrauf
+			}
 			wild.scaleToLevel(target);
 		}
 		world.addWildAnimal(wild, pos[0], pos[1]);

@@ -110,7 +110,7 @@ public class Renderer {
 		sb.append('\n');
 		// Legende: was die Tier-Farben über das Level verraten.
 		sb.append(GRAY).append("Lv-Farbe: ").append(RESET)
-				.append(GREEN).append("0-9 ").append(RESET)
+				.append(WHITE).append("0-9 ").append(RESET)
 				.append(CYAN).append("10-19 ").append(RESET)
 				.append(YELLOW).append("20-29 ").append(RESET)
 				.append(RED).append("30+").append(RESET).append('\n');
@@ -577,13 +577,14 @@ public class Renderer {
 
 	/**
 	 * Farbe nach Stärke (Level): je höher das Level, desto „heißer" die Farbe.
-	 * grün ≤ 9, cyan 10–19, gelb 20–29, rot ≥ 30. Die gleiche Skala wird auf der
+	 * weiß ≤ 9, cyan 10–19, gelb 20–29, rot ≥ 30. Die gleiche Skala wird auf der
 	 * Karte (Tier-Symbol) und bei der „Lv X"-Zahl verwendet, damit Farben überall
-	 * dasselbe bedeuten.
+	 * dasselbe bedeuten. (Bewusst kein Grün – das ließe schwache Tiere wie Bäume
+	 * aussehen.)
 	 */
 	private String levelColor(int level) {
 		if (level < 10) {
-			return GREEN;
+			return WHITE;
 		}
 		if (level < 20) {
 			return CYAN;

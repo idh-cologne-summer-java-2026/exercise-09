@@ -28,9 +28,10 @@ funktioniert es auch – dort jeweils **Taste + Enter** drücken.
 - `W` / `A` / `S` / `D` – bewegen
 - `Q` – beenden
 - Wasserfelder (`~`) heilen ein bisschen.
-- Die **Farbe** eines wilden Tieres verrät sein Level: grün (0–9), cyan
+- Die **Farbe** eines wilden Tieres verrät sein Level: weiß (0–9), cyan
   (10–19), gelb (20–29), rot (30+). So siehst du schon auf der Karte, wo
   starke Gegner lauern. Dieselbe Skala färbt die „Lv X"-Zahl im Kampf.
+  Je höher dein eigenes Level, desto häufiger spawnen auch stärkere Tiere.
 
 **Im Kampf**
 - `1`, `2`, … – Attacke wählen
