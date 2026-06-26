@@ -10,7 +10,8 @@ public class Lion extends WalkingMammal {
 	public Lion() {
 		setupBattler("Löwe", Type.FEUER, new Stats(55, 70, 45, 60),
 				new Move("Flammenbiss", Type.FEUER, 45, 95),
-				new Move("Brüllen", Type.NORMAL, 0, 100, MoveEffect.VERTEIDIGUNG_SENKEN, 100));
+				new Move("Brüllen", Type.NORMAL, 0, 100, MoveEffect.VERTEIDIGUNG_SENKEN, 100),
+				new Move("Feuersturm", Type.FEUER, 55, 85));
 	}
 
 	@Override

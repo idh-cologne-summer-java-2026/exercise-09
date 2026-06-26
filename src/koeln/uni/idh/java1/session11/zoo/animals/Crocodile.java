@@ -9,7 +9,8 @@ public class Crocodile extends WalkingMammal {
 	public Crocodile() {
 		setupBattler("Krokodil", Type.WASSER, new Stats(60, 65, 60, 35),
 				new Move("Wasserstoß", Type.WASSER, 45, 95),
-				new Move("Todesrolle", Type.WASSER, 55, 75));
+				new Move("Todesrolle", Type.WASSER, 55, 75),
+				new Move("Biss", Type.NORMAL, 45, 100));
 	}
 
 	@Override

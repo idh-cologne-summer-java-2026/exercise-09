@@ -10,7 +10,8 @@ public class Alpaca extends WalkingMammal {
 	public Alpaca() {
 		setupBattler("Alpaka", Type.PFLANZE, new Stats(45, 49, 49, 45),
 				new Move("Spucke", Type.PFLANZE, 40, 95, MoveEffect.VERGIFTEN, 30),
-				new Move("Tritt", Type.NORMAL, 35, 100));
+				new Move("Tritt", Type.NORMAL, 35, 100),
+				new Move("Rammstoß", Type.NORMAL, 50, 90));
 	}
 
 	@Override

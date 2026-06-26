@@ -10,7 +10,8 @@ public class Horse extends WalkingMammal {
 	public Horse() {
 		setupBattler("Pferd", Type.NORMAL, new Stats(50, 52, 43, 70),
 				new Move("Huftritt", Type.NORMAL, 45, 95),
-				new Move("Wiehern", Type.NORMAL, 0, 100, MoveEffect.ANGRIFF_SENKEN, 100));
+				new Move("Wiehern", Type.NORMAL, 0, 100, MoveEffect.ANGRIFF_SENKEN, 100),
+				new Move("Galopp", Type.NORMAL, 55, 90));
 	}
 
 	@Override
