@@ -24,7 +24,7 @@ public class Game {
 	private final Renderer renderer;
 
 	private World world;
-	private WalkingMammal player;
+	private final Team team = new Team();
 	private GameState state;
 	private boolean running = false;
 
@@ -48,8 +48,25 @@ public class Game {
 		return world;
 	}
 
+	/** Das aktuell aktive Tier des Spielers (Team-Anführer). */
 	public WalkingMammal getPlayer() {
-		return player;
+		return team.getActive();
+	}
+
+	public Team getTeam() {
+		return team;
+	}
+
+	/**
+	 * Wechselt das aktive Tier des Teams und übernimmt dessen Position in der
+	 * Welt, damit der Wechsel auch in der Overworld stimmt.
+	 */
+	public void setActiveAnimal(int index) {
+		WalkingMammal previous = team.getActive();
+		team.setActive(index);
+		if (world != null) {
+			world.setPlayer(team.getActive(), previous.getX(), previous.getY());
+		}
 	}
 
 	public void setState(GameState state) {
@@ -82,8 +99,8 @@ public class Game {
 	public void spawnWildAnimal() {
 		int[] pos = world.randomFreeTile();
 		WalkingMammal wild = AnimalFactory.randomWild(rng);
-		if (player != null) {
-			int target = Math.max(5, player.getLevel() + rng.nextInt(3) - 1);
+		if (team.size() > 0) {
+			int target = Math.max(5, getPlayer().getLevel() + rng.nextInt(3) - 1);
 			wild.scaleToLevel(target);
 		}
 		world.addWildAnimal(wild, pos[0], pos[1]);
@@ -135,12 +152,12 @@ public class Game {
 				}
 			}
 		}
-		this.player = AnimalFactory.create(choice);
+		team.add(AnimalFactory.create(choice));
 	}
 
 	private void buildWorld() {
 		this.world = new World(WORLD_WIDTH, WORLD_HEIGHT, rng);
-		world.setPlayer(player, WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
+		world.setPlayer(team.getActive(), WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
 		for (int i = 0; i < NUM_WILD_ANIMALS; i++) {
 			spawnWildAnimal();
 		}

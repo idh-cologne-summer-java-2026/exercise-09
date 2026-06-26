@@ -23,7 +23,7 @@ public class OverworldState implements GameState {
 
 	@Override
 	public void render() {
-		game.getRenderer().renderWorld(world);
+		game.getRenderer().renderWorld(world, game.getTeam().size(), Team.MAX_SIZE);
 	}
 
 	@Override

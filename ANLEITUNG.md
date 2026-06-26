@@ -22,7 +22,17 @@ funktioniert es auch – dort jeweils **Taste + Enter** drücken.
 
 **Im Kampf**
 - `1`, `2`, … – Attacke wählen
+- `Z` – **fangen** (wildes Tier ins Team holen)
+- `W` – **Tier wechseln** (kostet einen Zug)
 - `F` – fliehen
+
+## Team & Fangen
+Du kannst bis zu **6 Tiere** in deinem Team haben. Schwäche ein wildes Tier im
+Kampf und wirf ihm dann mit `Z` ein Leckerli zu – je weniger HP es noch hat (und
+wenn es vergiftet ist), desto eher schließt es sich dir an. Mit `W` wechselst du
+mitten im Kampf das aktive Tier. Wird dein aktives Tier besiegt, schickst du
+einfach ein anderes in den Kampf – verloren hast du erst, wenn **alle** Tiere
+besiegt sind.
 
 ## Tipp
 Achte auf den Typ! Z. B. ist Pflanze gegen Wasser sehr effektiv, Wasser gegen

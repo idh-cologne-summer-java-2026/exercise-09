@@ -64,7 +64,7 @@ public class Renderer {
 
 	// ---------------- Overworld ----------------
 
-	public void renderWorld(World world) {
+	public void renderWorld(World world, int teamSize, int teamMax) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(CLEAR);
 		sb.append(BOLD).append("🦙⚔️  Zookémon – Overworld").append(RESET).append("\n\n");
@@ -93,7 +93,9 @@ public class Renderer {
 		sb.append(GRAY).append("Bewegung: ").append(RESET)
 				.append("W/A/S/D   ")
 				.append(GRAY).append("Beenden: ").append(RESET).append("Q\n");
-		sb.append(GRAY).append("Wilde Tiere: ").append(RESET).append(wild.size()).append('\n');
+		sb.append(GRAY).append("Wilde Tiere: ").append(RESET).append(wild.size())
+				.append(GRAY).append("    Team: ").append(RESET)
+				.append(teamSize).append("/").append(teamMax).append('\n');
 		print(sb);
 	}
 
@@ -191,9 +193,64 @@ public class Renderer {
 				sb.append("  ").append(YELLOW).append(i + 1).append(RESET).append(") ")
 						.append(moveLine(moves.get(i), enemy)).append('\n');
 			}
-			sb.append("  ").append(YELLOW).append("F").append(RESET).append(") Fliehen\n");
+			sb.append("  ").append(YELLOW).append("Z").append(RESET).append(") Fangen   ")
+					.append(YELLOW).append("W").append(RESET).append(") Tier wechseln   ")
+					.append(YELLOW).append("F").append(RESET).append(") Fliehen\n");
 		}
 
+		print(sb);
+	}
+
+	/**
+	 * Team-Auswahlbildschirm für den Tierwechsel. Besiegte und das gerade aktive
+	 * Tier sind nicht wählbar.
+	 *
+	 * @param members     alle Tiere im Team
+	 * @param activeIndex Index des aktiven Tieres
+	 * @param forced      true, wenn der Wechsel erzwungen ist (kein Abbrechen)
+	 */
+	public void renderTeamMenu(List<WalkingMammal> members, int activeIndex, boolean forced) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(CLEAR);
+		sb.append(BOLD).append("🐾  Dein Team").append(RESET).append("\n\n");
+		if (forced) {
+			sb.append(RED).append("  Dein Tier wurde besiegt! Wähle ein neues:").append(RESET).append("\n\n");
+		} else {
+			sb.append(GRAY).append("  Welches Tier soll kämpfen?").append(RESET).append("\n\n");
+		}
+
+		for (int i = 0; i < members.size(); i++) {
+			WalkingMammal m = members.get(i);
+			boolean active = i == activeIndex;
+			boolean fainted = m.isFainted();
+			boolean selectable = !active && !fainted;
+
+			sb.append("  ");
+			if (selectable) {
+				sb.append(YELLOW).append(i + 1).append(RESET).append(") ");
+			} else {
+				sb.append(GRAY).append(i + 1).append(")").append(RESET).append(" ");
+			}
+			sb.append(emojiFor(m.getSymbol())).append(BOLD).append(m.getName()).append(RESET);
+			if (m.isEvolved()) {
+				sb.append(MAGENTA).append("★").append(RESET);
+			}
+			sb.append(GRAY).append("  Lv ").append(m.getLevel()).append(RESET);
+			sb.append("  ").append(hpBar(m));
+			if (fainted) {
+				sb.append(RED).append("  ✗ besiegt").append(RESET);
+			} else if (active) {
+				sb.append(BRIGHT_GREEN).append("  ◄ aktiv").append(RESET);
+			}
+			sb.append('\n');
+		}
+
+		sb.append('\n');
+		if (forced) {
+			sb.append(GRAY).append("Wähle mit der Ziffer.").append(RESET).append('\n');
+		} else {
+			sb.append(GRAY).append("Wähle mit der Ziffer, W oder F bricht ab.").append(RESET).append('\n');
+		}
 		print(sb);
 	}
 
@@ -382,6 +439,8 @@ public class Renderer {
 			return RED + "Du wurdest besiegt … 💀";
 		case GEFLOHEN:
 			return CYAN + "Erfolgreich geflohen! 🏃";
+		case GEFANGEN:
+			return MAGENTA + "Gefangen! Ein neuer Freund! 🤝";
 		default:
 			return "";
 		}

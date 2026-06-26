@@ -1,5 +1,7 @@
 package koeln.uni.idh.java1.session11.zoo.engine;
 
+import java.util.List;
+
 import koeln.uni.idh.java1.session11.zoo.animals.WalkingMammal;
 import koeln.uni.idh.java1.session11.zoo.battle.Battle;
 import koeln.uni.idh.java1.session11.zoo.battle.Battler;
@@ -33,15 +35,22 @@ public class BattleState implements GameState {
 
 	private final Game game;
 	private final Battle battle;
+	private final Team team;
 	private final WalkingMammal enemy;
 
 	private boolean summaryShown = false;
 	private int epGained = 0;
 	private LevelUpResult levelResult = null;
 
+	/** Ob gerade der Team-Auswahlbildschirm (Tierwechsel) gezeigt wird. */
+	private boolean choosingSwitch = false;
+	/** Bei einem erzwungenen Wechsel (aktives Tier besiegt) ist Abbrechen tabu. */
+	private boolean switchForced = false;
+
 	public BattleState(Game game, Battle battle, WalkingMammal enemy) {
 		this.game = game;
 		this.battle = battle;
+		this.team = game.getTeam();
 		this.enemy = enemy;
 	}
 
@@ -53,7 +62,9 @@ public class BattleState implements GameState {
 
 	@Override
 	public void render() {
-		if (summaryShown && battle.getResult() == Battle.Result.SPIELER_GEWINNT) {
+		if (choosingSwitch) {
+			game.getRenderer().renderTeamMenu(team.getMembers(), team.getActiveIndex(), switchForced);
+		} else if (summaryShown && battle.getResult() == Battle.Result.SPIELER_GEWINNT) {
 			game.getRenderer().renderVictory(battle.getPlayer(), enemy,
 					epGained, game.getTotalEp(), game.getVictories(), levelResult);
 		} else {
@@ -63,23 +74,99 @@ public class BattleState implements GameState {
 
 	@Override
 	public void handleInput(char key) {
+		if (choosingSwitch) {
+			handleSwitchSelection(key);
+			return;
+		}
 		if (battle.isOver()) {
 			advanceAfterBattle();
 			return;
 		}
 
-		if (key == 'f') {
+		switch (key) {
+		case 'f':
 			battle.flee();
-			playRound();
+			runRound();
 			return;
+		case 'z':
+			tryCatch();
+			return;
+		case 'w':
+			openSwitchMenu(false);
+			return;
+		default:
+			break;
 		}
 
 		if (Character.isDigit(key)) {
 			int index = key - '1';
 			if (index >= 0 && index < battle.getPlayer().getMoves().size()) {
 				battle.playerSelectsMove(index);
-				playRound();
+				runRound();
 			}
+		}
+	}
+
+	/**
+	 * Spielt die geplante Runde ab. Wird das aktive Tier dabei besiegt und ist
+	 * noch ein anderes kampffähig, muss der Spieler wechseln (statt zu verlieren).
+	 */
+	private void runRound() {
+		playRound();
+		if (battle.getResult() == Battle.Result.SPIELER_VERLIERT && team.hasOtherAlive()) {
+			openSwitchMenu(true);
+		}
+	}
+
+	/** Fangversuch, sofern noch Platz im Team ist. */
+	private void tryCatch() {
+		if (team.isFull()) {
+			battle.getLog().add("Dein Team ist voll – du kannst nichts fangen!");
+			return;
+		}
+		battle.attemptCatch();
+		runRound();
+	}
+
+	/** Öffnet den Team-Auswahlbildschirm (freiwillig oder erzwungen). */
+	private void openSwitchMenu(boolean forced) {
+		if (!forced && !team.hasOtherAlive()) {
+			battle.getLog().add("Du hast kein weiteres kampffähiges Tier!");
+			return;
+		}
+		choosingSwitch = true;
+		switchForced = forced;
+	}
+
+	/** Verarbeitet die Tastatureingabe im Team-Auswahlbildschirm. */
+	private void handleSwitchSelection(char key) {
+		// Abbrechen ist nur beim freiwilligen Wechsel erlaubt.
+		if (!switchForced && (key == 'w' || key == 'f')) {
+			choosingSwitch = false;
+			return;
+		}
+		if (!Character.isDigit(key)) {
+			return;
+		}
+		int index = key - '1';
+		List<WalkingMammal> members = team.getMembers();
+		if (index < 0 || index >= members.size()) {
+			return;
+		}
+		if (index == team.getActiveIndex() || members.get(index).isFainted()) {
+			return; // bereits aktiv oder besiegt – nicht wählbar
+		}
+
+		choosingSwitch = false;
+		if (switchForced) {
+			// Erzwungen: das neue Tier tritt an, der Kampf läuft normal weiter.
+			game.setActiveAnimal(index);
+			battle.continueWithNewPlayer(game.getPlayer());
+		} else {
+			// Freiwillig: kostet den Zug, das wilde Tier greift einmal an.
+			game.setActiveAnimal(index);
+			battle.switchPlayer(game.getPlayer());
+			runRound();
 		}
 	}
 
@@ -229,6 +316,14 @@ public class BattleState implements GameState {
 		switch (battle.getResult()) {
 		case SPIELER_GEWINNT:
 			// Besiegtes Tier verschwindet, ein neues wildes Tier erscheint.
+			game.getWorld().removeWildAnimal(enemy);
+			game.spawnWildAnimal();
+			game.setState(new OverworldState(game));
+			break;
+		case GEFANGEN:
+			// Gefangenes Tier kommt geheilt ins Team, ein neues erscheint.
+			enemy.restore();
+			team.add(enemy);
 			game.getWorld().removeWildAnimal(enemy);
 			game.spawnWildAnimal();
 			game.setState(new OverworldState(game));

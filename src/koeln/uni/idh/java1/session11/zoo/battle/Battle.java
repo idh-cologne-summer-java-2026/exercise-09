@@ -20,10 +20,11 @@ import java.util.function.Supplier;
 public class Battle {
 
 	public enum Result {
-		LAUFEND, SPIELER_GEWINNT, SPIELER_VERLIERT, GEFLOHEN
+		LAUFEND, SPIELER_GEWINNT, SPIELER_VERLIERT, GEFLOHEN, GEFANGEN
 	}
 
-	private final Battler player;
+	/** Das aktive Spieler-Tier. Veränderlich, weil der Spieler wechseln kann. */
+	private Battler player;
 	private final Battler enemy;
 	private final DamageCalculator calculator;
 	private final Random rng;
@@ -115,6 +116,77 @@ public class Battle {
 			steps.add(() -> poisonTick(player));
 			steps.add(() -> poisonTick(enemy));
 		}
+	}
+
+	/**
+	 * Fangversuch: Der Spieler wirft dem wilden Tier ein Leckerli zu. Je weniger
+	 * HP der Gegner hat (und ob er vergiftet ist), desto eher gelingt es. Klappt
+	 * es, endet der Kampf mit {@link Result#GEFANGEN}; sonst greift das wilde
+	 * Tier einmal an (wie bei gescheiterter Flucht).
+	 */
+	public void attemptCatch() {
+		if (isOver() || hasPendingSteps()) {
+			return;
+		}
+		log.add("Du wirfst " + enemy.getName() + " ein Leckerli zu …");
+		boolean success = rng.nextDouble() < catchChance();
+		if (success) {
+			steps.add(() -> {
+				log.add(enemy.getName() + " schließt Freundschaft mit dir!");
+				result = Result.GEFANGEN;
+				return StepResult.none();
+			});
+		} else {
+			steps.add(() -> {
+				log.add(enemy.getName() + " lässt sich nicht zähmen!");
+				return StepResult.none();
+			});
+			Move enemyMove = enemy.getMoves().get(rng.nextInt(enemy.getMoves().size()));
+			steps.add(() -> executeMove(enemy, player, enemyMove));
+			steps.add(() -> poisonTick(player));
+			steps.add(() -> poisonTick(enemy));
+		}
+	}
+
+	/**
+	 * Fangchance: Grundwert plus Bonus, je niedriger die Gegner-HP. Ein
+	 * vergifteter Gegner lässt sich etwas leichter fangen.
+	 */
+	private double catchChance() {
+		double missingHp = 1.0 - (double) enemy.getCurrentHp() / enemy.getMaxHp();
+		double chance = 0.30 + 0.55 * missingHp;
+		if (enemy.getStatus() != Status.KEINER) {
+			chance += 0.10;
+		}
+		return Math.min(0.95, chance);
+	}
+
+	/**
+	 * Freiwilliger Tierwechsel: Das neue Tier tritt an, dafür darf das wilde
+	 * Tier einmal angreifen (der Wechsel kostet also den Zug).
+	 */
+	public void switchPlayer(Battler newPlayer) {
+		if (isOver() || hasPendingSteps()) {
+			return;
+		}
+		this.player = newPlayer;
+		log.add("Los, " + newPlayer.getName() + "!");
+		Move enemyMove = enemy.getMoves().get(rng.nextInt(enemy.getMoves().size()));
+		steps.add(() -> executeMove(enemy, player, enemyMove));
+		steps.add(() -> poisonTick(player));
+		steps.add(() -> poisonTick(enemy));
+	}
+
+	/**
+	 * Erzwungener Wechsel, nachdem das aktive Tier besiegt wurde: Das neue Tier
+	 * tritt an, ohne dass das wilde Tier einen Extra-Angriff bekommt. Der Kampf
+	 * läuft danach normal weiter.
+	 */
+	public void continueWithNewPlayer(Battler newPlayer) {
+		this.player = newPlayer;
+		this.result = Result.LAUFEND;
+		steps.clear();
+		log.add(newPlayer.getName() + " tritt an!");
 	}
 
 	/**

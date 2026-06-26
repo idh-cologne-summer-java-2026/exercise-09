@@ -231,8 +231,12 @@ schaden = ( (2*level/5 + 2) * stärke * (angriff/verteidigung) / 50 + 2 )
     mit Silhouetten-Animation. Wilde Tiere skalieren auf das Spielerlevel.
   - ASCII-Sprites pro Tier im Kampf, fliegendes Projektil je Attacken-Typ,
     Treffer-Blitz mit Screen-Shake.
-  - Optionale Extras (Team/Fangen, Items) noch offen – Team-System ist für
-    einen späteren Schritt vorgesehen.
+  - Team & Fangen: Spieler-Team mit bis zu 6 Tieren (`Team`), wilde Tiere mit
+    `Z` fangen (Chance steigt bei niedriger Gegner-HP und Gift), mit `W` das
+    aktive Tier wechseln (kostet einen Zug). Wird das aktive Tier besiegt,
+    erzwungener Wechsel statt Game-Over – verloren erst, wenn das ganze Team
+    besiegt ist. Team-Anzeige in Overworld und eigener Auswahlbildschirm.
+  - Noch offen: Items (Beeren/Heiltränke).
 
 ## 11. Bauen & Spielen
 ```
