@@ -1,7 +1,9 @@
 # Zookémon – Kurzanleitung 🦙⚔️
 
 ## Worum geht's?
-Du steuerst ein Tier durch ein ASCII-Gehege. Wilde Tiere laufen frei umher –
+Zu Beginn wählst du – wie im echten Spiel – eines von **drei Starter-Zookémon**
+(Flauschpaka 🌱, Glutprankel 🔥 oder Schnappix 💧). Damit steuerst du ein Tier
+durch ein ASCII-Gehege. Wilde Tiere laufen frei umher –
 läufst du in eines hinein, startet ein **rundenbasierter Pokémon-Kampf**: Jedes
 Tier hat HP, Werte, einen Typ und Attacken. Typ-Effektivität und etwas Zufall
 entscheiden über den Schaden. Wer zuerst auf 0 HP fällt, verliert.

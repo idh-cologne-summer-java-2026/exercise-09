@@ -7,11 +7,11 @@ import koeln.uni.idh.java1.session11.zoo.battle.Type;
 public class Crocodile extends WalkingMammal {
 
 	public Crocodile() {
-		setupBattler("Krokodil", Type.WASSER, new Stats(60, 65, 60, 35),
+		setupBattler("Schnappix", Type.WASSER, new Stats(60, 65, 60, 35),
 				new Move("Wasserstoß", Type.WASSER, 45, 95),
 				new Move("Todesrolle", Type.WASSER, 55, 75),
 				new Move("Biss", Type.NORMAL, 45, 100));
-		setEvolution(8, "Urkrokodil", new Move("Urbiss", Type.WASSER, 70, 90));
+		setEvolution(8, "Tidekrok", new Move("Urbiss", Type.WASSER, 70, 90));
 	}
 
 	@Override

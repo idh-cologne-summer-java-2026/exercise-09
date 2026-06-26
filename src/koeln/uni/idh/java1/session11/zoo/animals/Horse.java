@@ -8,11 +8,11 @@ import koeln.uni.idh.java1.session11.zoo.battle.Type;
 public class Horse extends WalkingMammal {
 
 	public Horse() {
-		setupBattler("Pferd", Type.NORMAL, new Stats(50, 52, 43, 70),
+		setupBattler("Galoppi", Type.NORMAL, new Stats(50, 52, 43, 70),
 				new Move("Huftritt", Type.NORMAL, 45, 95),
 				new Move("Wiehern", Type.NORMAL, 0, 100, MoveEffect.ANGRIFF_SENKEN, 100),
 				new Move("Galopp", Type.NORMAL, 55, 90));
-		setEvolution(8, "Streitross", new Move("Sturmgalopp", Type.NORMAL, 70, 90));
+		setEvolution(8, "Donnerhuf", new Move("Sturmgalopp", Type.NORMAL, 70, 90));
 	}
 
 	@Override

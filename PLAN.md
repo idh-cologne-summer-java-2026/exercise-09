@@ -236,6 +236,10 @@ schaden = ( (2*level/5 + 2) * stärke * (angriff/verteidigung) / 50 + 2 )
     aktive Tier wechseln (kostet einen Zug). Wird das aktive Tier besiegt,
     erzwungener Wechsel statt Game-Over – verloren erst, wenn das ganze Team
     besiegt ist. Team-Anzeige in Overworld und eigener Auswahlbildschirm.
+  - Zookémon-Namen: Flauschpaka→Wollkoloss (Pflanze), Glutprankel→Pyroleon
+    (Feuer), Schnappix→Tidekrok (Wasser), Galoppi→Donnerhuf (Normal),
+    Trampfant→Mammutan (Erde), Wirbelaar→Orkanus (Luft). Zu Spielbeginn nur
+    3 Starter wählbar (Pflanze/Feuer/Wasser-Trio), der Rest erscheint wild.
   - Noch offen: Items (Beeren/Heiltränke).
 
 ## 11. Bauen & Spielen

@@ -10,8 +10,15 @@ import java.util.function.Supplier;
  */
 public final class AnimalFactory {
 
-	/** Alle wählbaren/spawnbaren Tierarten in fester Reihenfolge. */
+	/** Alle spawnbaren Tierarten in fester Reihenfolge. */
 	private static final Supplier<WalkingMammal>[] SPECIES = createSpecies();
+
+	/**
+	 * Die zu Beginn wählbaren Starter-Zookémon: das klassische Trio aus
+	 * Pflanze (Flauschpaka), Feuer (Glutprankel) und Wasser (Schnappix). Die
+	 * übrigen Arten trifft man nur als wilde Tiere.
+	 */
+	private static final int[] STARTER_INDICES = { 0, 3, 5 };
 
 	@SuppressWarnings("unchecked")
 	private static Supplier<WalkingMammal>[] createSpecies() {
@@ -28,22 +35,23 @@ public final class AnimalFactory {
 	private AnimalFactory() {
 	}
 
-	public static int speciesCount() {
-		return SPECIES.length;
+	/** Die Anzahl der wählbaren Starter-Zookémon. */
+	public static int starterCount() {
+		return STARTER_INDICES.length;
 	}
 
-	/** Erzeugt das Tier mit dem gegebenen Auswahl-Index (0-basiert). */
-	public static WalkingMammal create(int index) {
-		return SPECIES[index].get();
-	}
-
-	/** Eine frische Reihe je eines Exemplars aller Arten (für das Auswahlmenü). */
-	public static WalkingMammal[] oneOfEach() {
-		WalkingMammal[] all = new WalkingMammal[SPECIES.length];
-		for (int i = 0; i < SPECIES.length; i++) {
-			all[i] = SPECIES[i].get();
+	/** Je ein frisches Exemplar der wählbaren Starter (für das Auswahlmenü). */
+	public static WalkingMammal[] starters() {
+		WalkingMammal[] all = new WalkingMammal[STARTER_INDICES.length];
+		for (int i = 0; i < STARTER_INDICES.length; i++) {
+			all[i] = SPECIES[STARTER_INDICES[i]].get();
 		}
 		return all;
+	}
+
+	/** Erzeugt den Starter mit dem gegebenen Auswahl-Index (0-basiert). */
+	public static WalkingMammal createStarter(int starterIndex) {
+		return SPECIES[STARTER_INDICES[starterIndex]].get();
 	}
 
 	/** Ein zufälliges wildes Tier. */

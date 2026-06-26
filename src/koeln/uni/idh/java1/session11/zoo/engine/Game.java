@@ -122,11 +122,11 @@ public class Game {
 	}
 
 	private void chooseStarter() {
-		WalkingMammal[] options = AnimalFactory.oneOfEach();
+		WalkingMammal[] options = AnimalFactory.starters();
 		StringBuilder sb = new StringBuilder();
 		sb.append("[2J[H");
 		sb.append("[1m🦙⚔️  Willkommen bei Zookémon![0m\n\n");
-		sb.append("Wähle dein Tier:\n\n");
+		sb.append("Wähle dein erstes Zookémon:\n\n");
 		for (int i = 0; i < options.length; i++) {
 			WalkingMammal a = options[i];
 			sb.append("  ").append(i + 1).append(") ")
@@ -152,7 +152,7 @@ public class Game {
 				}
 			}
 		}
-		team.add(AnimalFactory.create(choice));
+		team.add(AnimalFactory.createStarter(choice));
 	}
 
 	private void buildWorld() {
