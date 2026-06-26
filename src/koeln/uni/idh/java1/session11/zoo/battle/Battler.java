@@ -17,6 +17,15 @@ public interface Battler {
 
 	int getLevel();
 
+	/** Aktuelle Erfahrung in Richtung des nächsten Levels. */
+	int getXp();
+
+	/** Erfahrung, die für den Aufstieg ins nächste Level nötig ist. */
+	int getXpForNextLevel();
+
+	/** Ob sich das Tier bereits entwickelt hat. */
+	boolean isEvolved();
+
 	int getCurrentHp();
 
 	void setCurrentHp(int hp);

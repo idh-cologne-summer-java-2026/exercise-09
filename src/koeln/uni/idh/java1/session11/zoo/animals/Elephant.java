@@ -11,6 +11,7 @@ public class Elephant extends WalkingMammal {
 				new Move("Stampfer", Type.ERDE, 50, 90),
 				new Move("Rüsselschlag", Type.NORMAL, 40, 100),
 				new Move("Erdbeben", Type.ERDE, 65, 80));
+		setEvolution(8, "Mammutan", new Move("Urgewalt", Type.ERDE, 75, 80));
 	}
 
 	@Override

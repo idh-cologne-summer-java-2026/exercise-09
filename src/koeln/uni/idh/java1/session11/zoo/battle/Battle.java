@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 /**
  * Die rundenbasierte Kampf-Engine. Sie ist bewusst UI-frei: sie kennt nur
@@ -27,7 +28,7 @@ public class Battle {
 	private final DamageCalculator calculator;
 	private final Random rng;
 	private final List<String> log = new ArrayList<>();
-	private final Deque<Runnable> steps = new ArrayDeque<>();
+	private final Deque<Supplier<StepResult>> steps = new ArrayDeque<>();
 	private Result result = Result.LAUFEND;
 
 	public Battle(Battler player, Battler enemy) {
@@ -120,18 +121,18 @@ public class Battle {
 	 * Führt den nächsten geplanten Schritt der Runde aus. Endet der Kampf
 	 * dabei, werden die restlichen Schritte verworfen.
 	 *
-	 * @return true, wenn ein Schritt ausgeführt wurde
+	 * @return was im Schritt passiert ist, oder null wenn keiner mehr offen war
 	 */
-	public boolean step() {
-		Runnable next = steps.poll();
+	public StepResult step() {
+		Supplier<StepResult> next = steps.poll();
 		if (next == null) {
-			return false;
+			return null;
 		}
-		next.run();
+		StepResult result = next.get();
 		if (checkFainted()) {
 			steps.clear();
 		}
-		return true;
+		return result;
 	}
 
 	private boolean decidePlayerFirst() {
@@ -143,17 +144,17 @@ public class Battle {
 		return rng.nextBoolean();
 	}
 
-	private void executeMove(Battler attacker, Battler defender, Move move) {
+	private StepResult executeMove(Battler attacker, Battler defender, Move move) {
 		// Wer schon besiegt ist, handelt nicht mehr.
 		if (attacker.isFainted()) {
-			return;
+			return StepResult.none();
 		}
 		log.add(attacker.getName() + " setzt " + move.getName() + " ein!");
 
 		// Genauigkeits-Wurf
 		if (rng.nextInt(100) >= move.getAccuracy()) {
 			log.add("… die Attacke geht daneben!");
-			return;
+			return StepResult.move(attacker, defender, move);
 		}
 
 		// Schaden (nur falls die Attacke Stärke hat)
@@ -172,6 +173,7 @@ public class Battle {
 		}
 
 		applyEffect(move, defender);
+		return StepResult.move(attacker, defender, move);
 	}
 
 	private void applyEffect(Move move, Battler defender) {
@@ -201,12 +203,14 @@ public class Battle {
 		}
 	}
 
-	private void poisonTick(Battler battler) {
+	private StepResult poisonTick(Battler battler) {
 		if (battler.getStatus() == Status.VERGIFTET && !battler.isFainted()) {
 			int damage = Math.max(1, battler.getMaxHp() / 8);
 			battler.setCurrentHp(Math.max(0, battler.getCurrentHp() - damage));
 			log.add(battler.getName() + " erleidet " + damage + " Giftschaden.");
+			return StepResult.status(battler);
 		}
+		return StepResult.none();
 	}
 
 	/**

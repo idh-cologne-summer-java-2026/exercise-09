@@ -75,10 +75,18 @@ public class Game {
 		totalEp += ep;
 	}
 
-	/** Spawnt ein neues zufälliges wildes Tier an einer freien Stelle. */
+	/**
+	 * Spawnt ein neues zufälliges wildes Tier an einer freien Stelle. Sein
+	 * Level orientiert sich am Spieler (±1), damit die Kämpfe spannend bleiben.
+	 */
 	public void spawnWildAnimal() {
 		int[] pos = world.randomFreeTile();
-		world.addWildAnimal(AnimalFactory.randomWild(rng), pos[0], pos[1]);
+		WalkingMammal wild = AnimalFactory.randomWild(rng);
+		if (player != null) {
+			int target = Math.max(5, player.getLevel() + rng.nextInt(3) - 1);
+			wild.scaleToLevel(target);
+		}
+		world.addWildAnimal(wild, pos[0], pos[1]);
 	}
 
 	/** Startet das Spiel: Auswahl, Welt-Aufbau, Hauptschleife. */

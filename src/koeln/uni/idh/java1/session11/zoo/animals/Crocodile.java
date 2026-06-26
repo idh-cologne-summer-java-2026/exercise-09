@@ -11,6 +11,7 @@ public class Crocodile extends WalkingMammal {
 				new Move("Wasserstoß", Type.WASSER, 45, 95),
 				new Move("Todesrolle", Type.WASSER, 55, 75),
 				new Move("Biss", Type.NORMAL, 45, 100));
+		setEvolution(8, "Urkrokodil", new Move("Urbiss", Type.WASSER, 70, 90));
 	}
 
 	@Override

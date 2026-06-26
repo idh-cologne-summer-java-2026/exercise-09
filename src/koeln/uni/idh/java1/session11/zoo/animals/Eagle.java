@@ -11,6 +11,7 @@ public class Eagle extends WalkingMammal {
 				new Move("Sturzflug", Type.LUFT, 50, 90),
 				new Move("Krallen", Type.NORMAL, 35, 100),
 				new Move("Windstoß", Type.LUFT, 45, 100));
+		setEvolution(8, "Wolkenaar", new Move("Orkanschwinge", Type.LUFT, 70, 85));
 	}
 
 	@Override

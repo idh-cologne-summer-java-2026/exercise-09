@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import koeln.uni.idh.java1.session11.zoo.battle.Battler;
+import koeln.uni.idh.java1.session11.zoo.battle.LevelUpResult;
 import koeln.uni.idh.java1.session11.zoo.battle.Move;
 import koeln.uni.idh.java1.session11.zoo.battle.Stats;
 import koeln.uni.idh.java1.session11.zoo.battle.Status;
@@ -51,6 +52,13 @@ public abstract class WalkingMammal implements Drawable, Battler {
 	protected int attackStage = 0;
 	protected int defenseStage = 0;
 
+	// --- Fortschritt (Level/Erfahrung/Entwicklung) ---
+	protected int xp = 0;
+	protected int evolutionLevel = Integer.MAX_VALUE;
+	protected String evolvedName = null;
+	protected Move evolutionMove = null;
+	protected boolean evolved = false;
+
 	/**
 	 * Richtet die Kampf-Eigenschaften eines Tieres ein. Wird von den
 	 * Unterklassen im Konstruktor aufgerufen. Setzt die HP auf das Maximum.
@@ -62,6 +70,17 @@ public abstract class WalkingMammal implements Drawable, Battler {
 		this.moves.clear();
 		this.moves.addAll(Arrays.asList(moves));
 		this.currentHp = stats.getMaxHp();
+	}
+
+	/**
+	 * Legt fest, wie sich das Tier entwickelt: ab welchem Level, zu welchem
+	 * Namen und mit welcher zusätzlichen Signatur-Attacke. Von den Unterklassen
+	 * im Konstruktor aufgerufen.
+	 */
+	protected void setEvolution(int atLevel, String evolvedName, Move evolutionMove) {
+		this.evolutionLevel = atLevel;
+		this.evolvedName = evolvedName;
+		this.evolutionMove = evolutionMove;
 	}
 
 	/**
@@ -172,6 +191,21 @@ public abstract class WalkingMammal implements Drawable, Battler {
 	}
 
 	@Override
+	public int getXp() {
+		return xp;
+	}
+
+	@Override
+	public int getXpForNextLevel() {
+		return level * 20;
+	}
+
+	@Override
+	public boolean isEvolved() {
+		return evolved;
+	}
+
+	@Override
 	public int getCurrentHp() {
 		return currentHp;
 	}
@@ -223,6 +257,66 @@ public abstract class WalkingMammal implements Drawable, Battler {
 		if (defenseStage > -6) {
 			defenseStage--;
 		}
+	}
+
+	/**
+	 * Lässt das Tier Erfahrung sammeln. Reicht sie für ein oder mehrere Level,
+	 * steigen die Werte; wird dabei das Entwicklungs-Level erreicht, entwickelt
+	 * sich das Tier.
+	 *
+	 * @param amount gewonnene Erfahrung
+	 * @return was sich dabei verändert hat (für die Anzeige)
+	 */
+	public LevelUpResult gainExperience(int amount) {
+		int levelsBefore = level;
+		boolean evolvedBefore = evolved;
+		String oldName = name;
+
+		xp += amount;
+		while (xp >= getXpForNextLevel()) {
+			xp -= getXpForNextLevel();
+			level++;
+			growStats();
+			if (!evolved && level >= evolutionLevel && evolvedName != null) {
+				evolve();
+			}
+		}
+		return new LevelUpResult(level - levelsBefore, level,
+				evolved && !evolvedBefore, oldName, name);
+	}
+
+	/**
+	 * Hebt ein frisches Tier auf das Ziellevel an (für wilde Tiere, damit sie
+	 * mit dem Spieler mitwachsen). Heilt anschließend vollständig.
+	 */
+	public void scaleToLevel(int targetLevel) {
+		while (level < targetLevel) {
+			level++;
+			growStats();
+		}
+		this.currentHp = getMaxHp();
+	}
+
+	/** Erhöht die Basiswerte um einen festen Betrag pro Level. */
+	private void growStats() {
+		int oldMax = stats.getMaxHp();
+		stats = new Stats(stats.getMaxHp() + 6, stats.getAttack() + 3,
+				stats.getDefense() + 3, stats.getSpeed() + 3);
+		// Das neu gewonnene Leben kommt direkt auf die aktuellen HP obendrauf.
+		currentHp += stats.getMaxHp() - oldMax;
+	}
+
+	/** Entwickelt das Tier: neuer Name, kräftiger Stat-Schub, Signatur-Attacke. */
+	private void evolve() {
+		int oldMax = stats.getMaxHp();
+		stats = new Stats((int) (stats.getMaxHp() * 1.2), (int) (stats.getAttack() * 1.2),
+				(int) (stats.getDefense() * 1.2), (int) (stats.getSpeed() * 1.2));
+		currentHp += stats.getMaxHp() - oldMax;
+		name = evolvedName;
+		if (evolutionMove != null) {
+			moves.add(evolutionMove);
+		}
+		evolved = true;
 	}
 
 	/** Stellt HP, Status und Stat-Stufen vollständig wieder her. */

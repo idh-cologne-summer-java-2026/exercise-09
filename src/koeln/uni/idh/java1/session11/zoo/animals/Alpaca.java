@@ -12,6 +12,7 @@ public class Alpaca extends WalkingMammal {
 				new Move("Spucke", Type.PFLANZE, 40, 95, MoveEffect.VERGIFTEN, 30),
 				new Move("Tritt", Type.NORMAL, 35, 100),
 				new Move("Rammstoß", Type.NORMAL, 50, 90));
+		setEvolution(8, "Alpakarol", new Move("Wollsturm", Type.PFLANZE, 70, 90));
 	}
 
 	@Override

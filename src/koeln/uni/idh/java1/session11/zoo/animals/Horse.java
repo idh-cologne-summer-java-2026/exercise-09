@@ -12,6 +12,7 @@ public class Horse extends WalkingMammal {
 				new Move("Huftritt", Type.NORMAL, 45, 95),
 				new Move("Wiehern", Type.NORMAL, 0, 100, MoveEffect.ANGRIFF_SENKEN, 100),
 				new Move("Galopp", Type.NORMAL, 55, 90));
+		setEvolution(8, "Streitross", new Move("Sturmgalopp", Type.NORMAL, 70, 90));
 	}
 
 	@Override

@@ -12,6 +12,7 @@ public class Lion extends WalkingMammal {
 				new Move("Flammenbiss", Type.FEUER, 45, 95),
 				new Move("Brüllen", Type.NORMAL, 0, 100, MoveEffect.VERTEIDIGUNG_SENKEN, 100),
 				new Move("Feuersturm", Type.FEUER, 55, 85));
+		setEvolution(8, "Königslöwe", new Move("Höllenglut", Type.FEUER, 70, 90));
 	}
 
 	@Override

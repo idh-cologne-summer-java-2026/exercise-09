@@ -5,6 +5,7 @@ import java.util.List;
 import koeln.uni.idh.java1.session11.zoo.animals.WalkingMammal;
 import koeln.uni.idh.java1.session11.zoo.battle.Battle;
 import koeln.uni.idh.java1.session11.zoo.battle.Battler;
+import koeln.uni.idh.java1.session11.zoo.battle.LevelUpResult;
 import koeln.uni.idh.java1.session11.zoo.battle.Move;
 import koeln.uni.idh.java1.session11.zoo.battle.Status;
 import koeln.uni.idh.java1.session11.zoo.battle.Type;
@@ -32,6 +33,8 @@ public class Renderer {
 	private static final String YELLOW = "[33m";
 	private static final String GRAY = "[90m";
 	private static final String WHITE = "[97m";
+
+	private static final String MAGENTA = "[95m";
 
 	private final boolean useEmoji;
 	private final boolean crlf;
@@ -119,47 +122,60 @@ public class Renderer {
 
 	// ---------------- Kampf ----------------
 
+	private static final int PROJECTILE_WIDTH = 38;
+	private static final int ENEMY_SPRITE_INDENT = 22;
+	private static final int PLAYER_SPRITE_INDENT = 4;
+	private static final int LOG_LINES = 5;
+
 	/** Normaler Kampfbildschirm: mit Attacken-Menü, wenn der Spieler dran ist. */
 	public void renderBattle(Battle battle) {
-		renderBattle(battle, null, true);
+		renderScene(battle, true, null);
 	}
 
 	/** Intro: das wilde Tier erscheint – ohne Menü, für einen kurzen Moment. */
 	public void renderBattleIntro(Battle battle) {
-		renderBattle(battle, null, false);
+		renderScene(battle, false, null);
 	}
 
 	/**
-	 * Frame während des Rundenablaufs: kein Menü, dafür optional ein
-	 * Treffer-Blitz auf dem gerade getroffenen Tier.
-	 *
-	 * @param flash das getroffene Tier (oder null)
+	 * Animations-Frame während des Rundenablaufs (ohne Menü), mit optionalen
+	 * Effekten: fliegendes Projektil, Treffer-Blitz, Screen-Shake.
 	 */
-	public void renderBattleStep(Battle battle, Battler flash) {
-		renderBattle(battle, flash, false);
+	public void renderBattleFx(Battle battle, BattleFx fx) {
+		renderScene(battle, false, fx);
 	}
 
-	private void renderBattle(Battle battle, Battler flash, boolean showMenu) {
+	private void renderScene(Battle battle, boolean showMenu, BattleFx fx) {
 		Battler player = battle.getPlayer();
 		Battler enemy = battle.getEnemy();
+		String pad = spaces(fx != null ? fx.shake : 0);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(CLEAR);
 		sb.append(BOLD).append("⚔️  KAMPF").append(RESET).append("\n\n");
 
-		// Gegner oben
-		sb.append("   ").append(battlerHeader(enemy)).append(hitMarker(enemy, flash)).append('\n');
-		sb.append("   ").append(hpBar(enemy)).append('\n');
-		sb.append('\n');
-		// Spieler unten
-		sb.append("            ").append(battlerHeader(player)).append(hitMarker(player, flash)).append('\n');
-		sb.append("            ").append(hpBar(player)).append('\n');
+		// Gegner: Info + HP, darunter sein Sprite
+		sb.append(pad).append("  ").append(battlerHeader(enemy)).append(hitMarker(enemy, fx)).append('\n');
+		sb.append(pad).append("  ").append(hpBar(enemy)).append('\n');
+		appendSprite(sb, enemy, fx, ENEMY_SPRITE_INDENT, pad);
+
+		// Effekt-Zeile mit dem fliegenden Projektil
+		sb.append(pad).append(projectileRow(fx)).append('\n');
+
+		// Spieler: Sprite, darunter Info + HP
+		appendSprite(sb, player, fx, PLAYER_SPRITE_INDENT, pad);
+		sb.append(pad).append("  ").append(battlerHeader(player)).append(hitMarker(player, fx)).append('\n');
+		sb.append(pad).append("  ").append(hpBar(player)).append('\n');
 		sb.append('\n');
 
-		// Kampf-Log (letzte Zeilen)
+		// Kampf-Log: immer LOG_LINES Zeilen, damit das Layout ruhig bleibt
 		sb.append(GRAY).append("──────── Kampf-Log ────────").append(RESET).append('\n');
 		List<String> log = battle.getLog();
-		int from = Math.max(0, log.size() - 5);
+		int from = Math.max(0, log.size() - LOG_LINES);
+		int shown = log.size() - from;
+		for (int i = 0; i < LOG_LINES - shown; i++) {
+			sb.append('\n');
+		}
 		for (int i = from; i < log.size(); i++) {
 			sb.append("  ").append(log.get(i)).append('\n');
 		}
@@ -181,6 +197,60 @@ public class Renderer {
 		print(sb);
 	}
 
+	/** Hängt das ASCII-Bild eines Tieres an – rot blinkend, wenn es getroffen wird. */
+	private void appendSprite(StringBuilder sb, Battler b, BattleFx fx, int indent, String pad) {
+		boolean flashing = fx != null && fx.flash == b;
+		String color = flashing ? (BOLD + RED) : typeColor(b.getType());
+		for (String line : Sprites.forSymbol(b.getSymbol())) {
+			sb.append(pad).append(spaces(indent)).append(color).append(line).append(RESET).append('\n');
+		}
+	}
+
+	/** Baut die Zeile mit dem fliegenden Projektil (oder eine leere Zeile). */
+	private String projectileRow(BattleFx fx) {
+		char[] row = new char[PROJECTILE_WIDTH];
+		for (int i = 0; i < row.length; i++) {
+			row[i] = ' ';
+		}
+		if (fx != null && fx.projectileType != null) {
+			char glyph = projectileGlyph(fx.projectileType);
+			for (int k = 0; k < 3; k++) {
+				int c = fx.projectileColumn - k;
+				if (c >= 0 && c < PROJECTILE_WIDTH) {
+					row[c] = glyph;
+				}
+			}
+			return "      " + typeColor(fx.projectileType) + BOLD + new String(row) + RESET;
+		}
+		return "      " + new String(row);
+	}
+
+	private char projectileGlyph(Type type) {
+		switch (type) {
+		case FEUER:
+			return '*';
+		case WASSER:
+			return '~';
+		case PFLANZE:
+			return '%';
+		case ERDE:
+			return 'o';
+		case LUFT:
+			return '-';
+		case NORMAL:
+		default:
+			return '+';
+		}
+	}
+
+	private String spaces(int n) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < n; i++) {
+			sb.append(' ');
+		}
+		return sb.toString();
+	}
+
 	/** Eine Menüzeile inkl. Hinweis auf die Typ-Effektivität gegen den Gegner. */
 	private String moveLine(Move m, Battler enemy) {
 		StringBuilder sb = new StringBuilder();
@@ -200,15 +270,44 @@ public class Renderer {
 	}
 
 	/** Der „Treffer!"-Blitz neben dem gerade getroffenen Tier. */
-	private String hitMarker(Battler b, Battler flash) {
-		if (flash != null && flash == b) {
+	private String hitMarker(Battler b, BattleFx fx) {
+		if (fx != null && fx.flash == b) {
 			return "  " + BOLD + RED + "💥 TREFFER!" + RESET;
 		}
 		return "";
 	}
 
-	/** Sieg-Zusammenfassung: besiegtes Tier, gewonnene Erfahrung und Bilanz. */
-	public void renderVictory(Battler player, Battler enemy, int epGained, int totalEp, int victories) {
+	/**
+	 * Ein Frame der Entwicklungs-Animation: das Tier flackert zwischen seinem
+	 * Bild und einer Silhouette.
+	 *
+	 * @param symbol     Karten-Symbol des Tieres (wählt das Sprite)
+	 * @param text       Überschrift über dem Bild
+	 * @param silhouette true = nur Umriss (alle Zeichen als Block)
+	 */
+	public void renderEvolutionFrame(char symbol, String text, boolean silhouette) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(CLEAR).append("\n\n");
+		sb.append(BOLD).append(MAGENTA).append("  ✨ ").append(text).append(" ✨").append(RESET).append("\n\n\n");
+		String color = silhouette ? MAGENTA : BRIGHT_GREEN;
+		for (String line : Sprites.forSymbol(symbol)) {
+			sb.append("            ").append(BOLD).append(color)
+					.append(silhouette ? toSilhouette(line) : line).append(RESET).append('\n');
+		}
+		print(sb);
+	}
+
+	private String toSilhouette(String line) {
+		StringBuilder sb = new StringBuilder();
+		for (char c : line.toCharArray()) {
+			sb.append(c == ' ' ? ' ' : '#');
+		}
+		return sb.toString();
+	}
+
+	/** Sieg-Zusammenfassung: besiegtes Tier, Erfahrung, Level-Fortschritt, Bilanz. */
+	public void renderVictory(Battler player, Battler enemy, int epGained, int totalEp,
+			int victories, LevelUpResult level) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(CLEAR);
 		sb.append(BOLD).append(BRIGHT_GREEN).append("🎉  SIEG!").append(RESET).append("\n\n");
@@ -218,13 +317,25 @@ public class Renderer {
 
 		sb.append("  ").append(YELLOW).append("Erfahrung erhalten:").append(RESET)
 				.append("  +").append(epGained).append(" EP\n");
-		sb.append("  ").append(GRAY).append("Gesamt-Erfahrung:").append(RESET)
-				.append("    ").append(totalEp).append(" EP\n");
 		sb.append("  ").append(GRAY).append("Siege insgesamt:").append(RESET)
 				.append("     ").append(victories).append("\n\n");
 
-		sb.append("  ").append(emojiFor(player.getSymbol())).append(player.getName())
-				.append(" ist bereit:\n");
+		if (level != null && level.leveledUp()) {
+			sb.append("  ").append(BOLD).append(BRIGHT_GREEN)
+					.append("⬆ Level ").append(level.getNewLevel()).append(" erreicht!")
+					.append(RESET).append('\n');
+		}
+		if (level != null && level.isEvolved()) {
+			sb.append("  ").append(BOLD).append(MAGENTA)
+					.append("✨ ").append(level.getOldName()).append(" → ")
+					.append(level.getNewName()).append("!").append(RESET).append('\n');
+		}
+
+		sb.append('\n');
+		sb.append("  ").append(emojiFor(player.getSymbol())).append(BOLD).append(player.getName())
+				.append(RESET).append(GRAY).append("  Lv ").append(player.getLevel())
+				.append("  (EP ").append(player.getXp()).append("/")
+				.append(player.getXpForNextLevel()).append(")").append(RESET).append('\n');
 		sb.append("  ").append(hpBar(player)).append("\n\n");
 
 		sb.append(GRAY).append("Taste drücken, um weiterzuziehen …").append(RESET).append('\n');
@@ -234,6 +345,9 @@ public class Renderer {
 	private String battlerHeader(Battler b) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(BOLD).append(emojiFor(b.getSymbol())).append(b.getName()).append(RESET);
+		if (b.isEvolved()) {
+			sb.append(MAGENTA).append("★").append(RESET);
+		}
 		sb.append("  ").append(typeColor(b.getType())).append("(")
 				.append(b.getType().getDisplayName()).append(")").append(RESET);
 		sb.append(GRAY).append("  Lv ").append(b.getLevel()).append(RESET);

@@ -226,7 +226,13 @@ schaden = ( (2*level/5 + 2) * stärke * (angriff/verteidigung) / 50 + 2 )
   - „Juice": schrittweise Runden mit Pausen, animierte HP-Balken, kritische
     Treffer (Volltreffer), Effektivitäts-Hinweis im Attacken-Menü,
     Treffer-Blitz, Intro-Sequenz und Sieg-Bildschirm mit EP-/Siege-Bilanz.
-  - Optionale Extras (Team/Fangen, echtes Level-Up, Items) bewusst noch offen.
+  - Level-Up & Entwicklung: Siege geben echte Erfahrung, Werte wachsen, bei
+    Level 8 entwickelt sich das Tier (neuer Name, Stat-Schub, Signatur-Attacke)
+    mit Silhouetten-Animation. Wilde Tiere skalieren auf das Spielerlevel.
+  - ASCII-Sprites pro Tier im Kampf, fliegendes Projektil je Attacken-Typ,
+    Treffer-Blitz mit Screen-Shake.
+  - Optionale Extras (Team/Fangen, Items) noch offen – Team-System ist für
+    einen späteren Schritt vorgesehen.
 
 ## 11. Bauen & Spielen
 ```
