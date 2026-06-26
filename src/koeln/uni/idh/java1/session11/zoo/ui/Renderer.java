@@ -84,7 +84,9 @@ public class Renderer {
 				}
 				WalkingMammal animal = animalAt(wild, x, y);
 				if (animal != null) {
-					sb.append(BOLD).append(typeColor(animal.getType()))
+					// Farbe nach Level (nicht Typ): so erkennt man auf der Karte,
+					// wo es starke Tiere herzieht – das Level steht hier sonst nirgends.
+					sb.append(BOLD).append(levelColor(animal.getLevel()))
 							.append(animal.getSymbol()).append(RESET);
 					continue;
 				}
@@ -106,6 +108,12 @@ public class Renderer {
 					.append(GRAY).append(" = Prof. Nils").append(RESET);
 		}
 		sb.append('\n');
+		// Legende: was die Tier-Farben über das Level verraten.
+		sb.append(GRAY).append("Lv-Farbe: ").append(RESET)
+				.append(GREEN).append("0-9 ").append(RESET)
+				.append(CYAN).append("10-19 ").append(RESET)
+				.append(YELLOW).append("20-29 ").append(RESET)
+				.append(RED).append("30+").append(RESET).append('\n');
 		print(sb);
 	}
 
@@ -212,7 +220,8 @@ public class Renderer {
 		if (champion.isEvolved()) {
 			sb.append(MAGENTA).append("★").append(RESET);
 		}
-		sb.append(GRAY).append("  Lv ").append(champion.getLevel()).append(RESET).append('\n');
+		sb.append(GRAY).append("  Lv ").append(RESET)
+				.append(levelColor(champion.getLevel())).append(champion.getLevel()).append(RESET).append('\n');
 		sb.append("  ").append(GRAY).append("Gewonnene Kämpfe insgesamt: ").append(RESET)
 				.append(victories).append("\n\n\n");
 		sb.append(GRAY).append("  Taste drücken, um das Spiel zu beenden …").append(RESET).append('\n');
@@ -352,7 +361,8 @@ public class Renderer {
 			if (m.isEvolved()) {
 				sb.append(MAGENTA).append("★").append(RESET);
 			}
-			sb.append(GRAY).append("  Lv ").append(m.getLevel()).append(RESET);
+			sb.append(GRAY).append("  Lv ").append(RESET)
+					.append(levelColor(m.getLevel())).append(m.getLevel()).append(RESET);
 			sb.append("  ").append(hpBar(m));
 			if (fainted) {
 				sb.append(RED).append("  ✗ besiegt").append(RESET);
@@ -507,8 +517,9 @@ public class Renderer {
 
 		sb.append('\n');
 		sb.append("  ").append(emojiFor(player.getSymbol())).append(BOLD).append(player.getName())
-				.append(RESET).append(GRAY).append("  Lv ").append(player.getLevel())
-				.append("  (EP ").append(player.getXp()).append("/")
+				.append(RESET).append(GRAY).append("  Lv ").append(RESET)
+				.append(levelColor(player.getLevel())).append(player.getLevel()).append(RESET)
+				.append(GRAY).append("  (EP ").append(player.getXp()).append("/")
 				.append(player.getXpForNextLevel()).append(")").append(RESET).append('\n');
 		sb.append("  ").append(hpBar(player)).append("\n\n");
 
@@ -524,7 +535,8 @@ public class Renderer {
 		}
 		sb.append("  ").append(typeColor(b.getType())).append("(")
 				.append(b.getType().getDisplayName()).append(")").append(RESET);
-		sb.append(GRAY).append("  Lv ").append(b.getLevel()).append(RESET);
+		sb.append(GRAY).append("  Lv ").append(RESET)
+				.append(levelColor(b.getLevel())).append(b.getLevel()).append(RESET);
 		if (b.getStatus() != Status.KEINER) {
 			sb.append("  ").append(RED).append("[").append(b.getStatus().getDisplayName())
 					.append("]").append(RESET);
@@ -561,6 +573,25 @@ public class Renderer {
 		default:
 			return "";
 		}
+	}
+
+	/**
+	 * Farbe nach Stärke (Level): je höher das Level, desto „heißer" die Farbe.
+	 * grün ≤ 9, cyan 10–19, gelb 20–29, rot ≥ 30. Die gleiche Skala wird auf der
+	 * Karte (Tier-Symbol) und bei der „Lv X"-Zahl verwendet, damit Farben überall
+	 * dasselbe bedeuten.
+	 */
+	private String levelColor(int level) {
+		if (level < 10) {
+			return GREEN;
+		}
+		if (level < 20) {
+			return CYAN;
+		}
+		if (level < 30) {
+			return YELLOW;
+		}
+		return RED;
 	}
 
 	private String typeColor(Type type) {
