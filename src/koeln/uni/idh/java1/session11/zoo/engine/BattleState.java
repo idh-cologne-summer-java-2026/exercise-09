@@ -315,9 +315,15 @@ public class BattleState implements GameState {
 		resolveAndLeave();
 	}
 
-	/** Erfahrung für einen Sieg, grob abhängig von Größe und Level des Gegners. */
+	/**
+	 * Erfahrung für einen Sieg – bewusst großzügig, damit man zügig zum Bosskampf
+	 * kommt: ein Sieg bringt rund 5 Level. Die EP-Kosten für fünf Aufstiege ab
+	 * Level L betragen 20·(L + L+1 + … + L+4) = 100·L + 200; genau so viel geben
+	 * wir (am Level des Gegners bemessen, das etwa unserem entspricht). Stärkere
+	 * (Elite-)Gegner bringen dadurch automatisch noch etwas mehr.
+	 */
 	private int experienceFor(WalkingMammal foe) {
-		return 10 + foe.getMaxHp() / 2 + foe.getLevel() * 2;
+		return 200 + foe.getLevel() * 100;
 	}
 
 	/** Entwicklungs-Animation: das Tier flackert zwischen Bild und Silhouette. */
