@@ -161,16 +161,21 @@ public class Battle {
 	}
 
 	/**
-	 * Fangchance: Grundwert plus Bonus, je niedriger die Gegner-HP. Ein
-	 * vergifteter Gegner lässt sich etwas leichter fangen.
+	 * Fangchance: ein niedriger Grundwert, der vor allem mit den fehlenden HP des
+	 * Gegners steigt – wer fangen will, sollte das Tier also erst schwächen. Ein
+	 * vergifteter (allgemein: mit Status belegter) Gegner lässt sich etwas
+	 * leichter fangen.
+	 *
+	 * Bei voller HP nur 5 %, bei halber HP 35 %, kurz vor K.o. gut 60 %
+	 * (jeweils +10 % bei Status), gedeckelt bei 90 %.
 	 */
 	private double catchChance() {
 		double missingHp = 1.0 - (double) enemy.getCurrentHp() / enemy.getMaxHp();
-		double chance = 0.30 + 0.55 * missingHp;
+		double chance = 0.05 + 0.60 * missingHp;
 		if (enemy.getStatus() != Status.KEINER) {
 			chance += 0.10;
 		}
-		return Math.min(0.95, chance);
+		return Math.min(0.90, chance);
 	}
 
 	/**
