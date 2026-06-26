@@ -99,25 +99,32 @@ public class World {
 	}
 
 	/**
-	 * Stellt Prof. Nils an einen festen Ort und macht das Feld sowie seine
-	 * direkten Nachbarfelder begehbar, damit man ihn erreichen kann.
+	 * Stellt Prof. Nils an einen festen Ort und baut eine kleine Festung um ihn:
+	 * einen Mauerring mit einem einzelnen Tor an der Unterseite. Drinnen ist
+	 * alles begehbar, sodass man durch das Tor zu ihm gelangt.
 	 */
 	public void placeBoss(int x, int y) {
 		this.bossX = x;
 		this.bossY = y;
-		grid[y][x] = Tile.GRAS;
-		clearAround(x, y);
+		buildFortress(x, y);
 	}
 
-	private void clearAround(int x, int y) {
-		int[][] offsets = { { 0, -1 }, { 0, 1 }, { -1, 0 }, { 1, 0 } };
-		for (int[] o : offsets) {
-			int nx = x + o[0];
-			int ny = y + o[1];
-			if (nx > 0 && ny > 0 && nx < width - 1 && ny < height - 1) {
-				grid[ny][nx] = Tile.GRAS;
+	private void buildFortress(int cx, int cy) {
+		int r = 2;
+		for (int yy = cy - r; yy <= cy + r; yy++) {
+			for (int xx = cx - r; xx <= cx + r; xx++) {
+				if (xx <= 0 || yy <= 0 || xx >= width - 1 || yy >= height - 1) {
+					continue; // den äußeren Spielfeldrand nicht überschreiben
+				}
+				boolean ring = xx == cx - r || xx == cx + r || yy == cy - r || yy == cy + r;
+				grid[yy][xx] = ring ? Tile.WAND : Tile.GRAS;
 			}
 		}
+		// Tor an der Unterseite (Richtung Spielfeld) und das Feld von Nils frei.
+		if (cy + r < height - 1) {
+			grid[cy + r][cx] = Tile.GRAS;
+		}
+		grid[cy][cx] = Tile.GRAS;
 	}
 
 	public boolean isBossPresent() {

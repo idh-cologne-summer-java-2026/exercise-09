@@ -222,10 +222,11 @@ public class Game {
 	private void buildWorld() {
 		this.world = new World(WORLD_WIDTH, WORLD_HEIGHT, rng);
 		world.setPlayer(team.getActive(), WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
+		// Festung zuerst bauen, damit keine wilden Tiere darunter landen.
+		world.placeBoss(BOSS_X, BOSS_Y);
 		for (int i = 0; i < NUM_WILD_ANIMALS; i++) {
 			spawnWildAnimal();
 		}
-		world.placeBoss(BOSS_X, BOSS_Y);
 	}
 
 	private void loop() {

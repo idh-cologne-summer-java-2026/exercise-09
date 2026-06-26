@@ -8,10 +8,10 @@ public class Elephant extends WalkingMammal {
 
 	public Elephant() {
 		setupBattler("Trampfant", Type.ERDE, new Stats(80, 60, 70, 25),
-				new Move("Stampfer", Type.ERDE, 50, 90),
-				new Move("Rüsselschlag", Type.NORMAL, 40, 100),
-				new Move("Erdbeben", Type.ERDE, 65, 80));
-		setEvolution(8, "Mammutan", new Move("Urgewalt", Type.ERDE, 75, 80));
+				new Move("Stampfer", Type.ERDE, 50, 95),
+				new Move("Rüsselschlag", Type.NORMAL, 45, 100),
+				new Move("Erdbeben", Type.ERDE, 65, 85));
+		setEvolution(8, "Mammutan", new Move("Urgewalt", Type.ERDE, 75, 90));
 	}
 
 	@Override

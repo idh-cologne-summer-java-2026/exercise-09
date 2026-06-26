@@ -21,17 +21,17 @@ import koeln.uni.idh.java1.session11.zoo.ui.Renderer;
  */
 public class BattleState implements GameState {
 
-	private static final long STEP_PAUSE_MS = 500;
-	private static final long FLASH_MS = 70;
-	private static final long AFTER_HIT_PAUSE_MS = 250;
-	private static final int HP_FRAMES = 8;
-	private static final long HP_FRAME_MS = 45;
-	private static final long INTRO_MS = 900;
+	private static final long STEP_PAUSE_MS = 320;
+	private static final long FLASH_MS = 55;
+	private static final long AFTER_HIT_PAUSE_MS = 150;
+	private static final int HP_FRAMES = 6;
+	private static final long HP_FRAME_MS = 28;
+	private static final long INTRO_MS = 650;
 
 	/** Muss zur PROJECTILE_WIDTH des Renderers passen. */
 	private static final int PROJECTILE_WIDTH = 38;
-	private static final int PROJECTILE_FRAMES = 9;
-	private static final long PROJECTILE_FRAME_MS = 30;
+	private static final int PROJECTILE_FRAMES = 6;
+	private static final long PROJECTILE_FRAME_MS = 24;
 
 	private final Game game;
 	private final Battle battle;
