@@ -8,6 +8,10 @@ läufst du in eines hinein, startet ein **rundenbasierter Pokémon-Kampf**: Jede
 Tier hat HP, Werte, einen Typ und Attacken. Typ-Effektivität und etwas Zufall
 entscheiden über den Schaden. Wer zuerst auf 0 HP fällt, verliert.
 
+**Ziel des Spiels:** Besiege den Erzfeind **Prof. Nils** (Symbol `N`). Er hat
+sich genau das Zookémon geschnappt, das gegen dein Starter-Zookémon stark ist.
+Werde durch Kämpfe und Fangen stärker, bis du ihn schlagen kannst!
+
 ## Starten
 ```
 javac -d bin -encoding UTF-8 $(find src -name "*.java")
@@ -35,6 +39,15 @@ wenn es vergiftet ist), desto eher schließt es sich dir an. Mit `W` wechselst d
 mitten im Kampf das aktive Tier. Wird dein aktives Tier besiegt, schickst du
 einfach ein anderes in den Kampf – verloren hast du erst, wenn **alle** Tiere
 besiegt sind.
+
+## Prof. Nils, der Erzfeind
+Nils steht an einem festen Ort (`N`). Lauf gegen ihn, um ihn herauszufordern –
+vor dem Kampf wird dein Team **voll geheilt**, du kämpfst aber nicht fangbar und
+ohne Fluchtmöglichkeit. Sein Zookémon ist genau vom **Konter-Typ** deines
+Starters und entwickelt sowie hochstufig – du brauchst also ein starkes Team.
+**Tipp:** Fang dir gezielt ein Tier, dessen Typ *seinen* Typ kontert! Verlierst
+du, wird dein Team geheilt und du landest wieder in der Welt – einfach
+weitertrainieren und es erneut versuchen.
 
 ## Tipp
 Achte auf den Typ! Z. B. ist Pflanze gegen Wasser sehr effektiv, Wasser gegen

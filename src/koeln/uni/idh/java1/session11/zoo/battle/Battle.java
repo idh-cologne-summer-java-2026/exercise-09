@@ -37,11 +37,23 @@ public class Battle {
 	}
 
 	public Battle(Battler player, Battler enemy, Random rng) {
+		this(player, enemy, rng, true);
+	}
+
+	/**
+	 * @param wild true = wildes Tier (fangbar, Flucht möglich), false =
+	 *             Trainerkampf (z. B. gegen Prof. Nils).
+	 */
+	public Battle(Battler player, Battler enemy, Random rng, boolean wild) {
 		this.player = player;
 		this.enemy = enemy;
 		this.rng = rng;
 		this.calculator = new DamageCalculator(rng);
-		log.add("Ein wildes " + enemy.getName() + " erscheint!");
+		if (wild) {
+			log.add("Ein wildes " + enemy.getName() + " erscheint!");
+		} else {
+			log.add(enemy.getName() + " stellt sich dir entgegen!");
+		}
 	}
 
 	public Battler getPlayer() {

@@ -240,6 +240,16 @@ schaden = ( (2*level/5 + 2) * stärke * (angriff/verteidigung) / 50 + 2 )
     (Feuer), Schnappix→Tidekrok (Wasser), Galoppi→Donnerhuf (Normal),
     Trampfant→Mammutan (Erde), Wirbelaar→Orkanus (Luft). Zu Spielbeginn nur
     3 Starter wählbar (Pflanze/Feuer/Wasser-Trio), der Rest erscheint wild.
+  - Erzfeind „Prof. Nils": Anfangsdialog (Intro → Starter-Wahl → Rivalen-Reveal)
+    über ein generisches `DialogueState` + `StarterSelectState` (State-Pattern
+    statt blockierender Schleife). Nils erhält bei der Starter-Wahl das genau
+    konternde Starter-Zookémon (`AnimalFactory.counterStarter`), entwickelt auf
+    hohem Level (`developToLevel`). Er steht an festem Ort (`N`); Ansprechen
+    startet nach kurzem Dialog den Trainerkampf (Vollheilung vorab, kein Fangen,
+    keine Flucht). Sieg → `EndingState` (Spiel gewonnen). Niederlagen (auch
+    gegen wilde Tiere) heilen jetzt das Team und führen zurück in die Overworld
+    statt das Spiel zu beenden (Rematch möglich). `Trainer`-Klasse als Gegner.
+  - Platzhalter-Dialogtexte in `Game` (intro/rival/boss) – noch auszugestalten.
   - Noch offen: Items (Beeren/Heiltränke).
 
 ## 11. Bauen & Spielen

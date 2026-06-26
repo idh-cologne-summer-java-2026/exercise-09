@@ -22,6 +22,10 @@ public class World {
 
 	private WalkingMammal player;
 
+	// Position des Erzfeindes Prof. Nils (fester Ort). -1 = nicht (mehr) da.
+	private int bossX = -1;
+	private int bossY = -1;
+
 	public World(int width, int height, Random rng) {
 		this.width = width;
 		this.height = height;
@@ -94,6 +98,50 @@ public class World {
 		wildAnimals.remove(animal);
 	}
 
+	/**
+	 * Stellt Prof. Nils an einen festen Ort und macht das Feld sowie seine
+	 * direkten Nachbarfelder begehbar, damit man ihn erreichen kann.
+	 */
+	public void placeBoss(int x, int y) {
+		this.bossX = x;
+		this.bossY = y;
+		grid[y][x] = Tile.GRAS;
+		clearAround(x, y);
+	}
+
+	private void clearAround(int x, int y) {
+		int[][] offsets = { { 0, -1 }, { 0, 1 }, { -1, 0 }, { 1, 0 } };
+		for (int[] o : offsets) {
+			int nx = x + o[0];
+			int ny = y + o[1];
+			if (nx > 0 && ny > 0 && nx < width - 1 && ny < height - 1) {
+				grid[ny][nx] = Tile.GRAS;
+			}
+		}
+	}
+
+	public boolean isBossPresent() {
+		return bossX >= 0;
+	}
+
+	public boolean isBossAt(int x, int y) {
+		return isBossPresent() && bossX == x && bossY == y;
+	}
+
+	public int getBossX() {
+		return bossX;
+	}
+
+	public int getBossY() {
+		return bossY;
+	}
+
+	/** Entfernt Prof. Nils aus der Welt (nachdem er besiegt wurde). */
+	public void removeBoss() {
+		this.bossX = -1;
+		this.bossY = -1;
+	}
+
 	/** Liegt (x,y) im Feld und ist das Zielfeld begehbar? */
 	public boolean isWalkable(int x, int y) {
 		if (x < 0 || y < 0 || x >= width || y >= height) {
@@ -164,6 +212,9 @@ public class World {
 			if (player != null && player.getX() == nx && player.getY() == ny) {
 				continue;
 			}
+			if (isBossAt(nx, ny)) {
+				continue;
+			}
 			a.setX(nx);
 			a.setY(ny);
 		}
@@ -174,7 +225,7 @@ public class World {
 		for (int attempt = 0; attempt < 1000; attempt++) {
 			int x = 1 + rng.nextInt(width - 2);
 			int y = 1 + rng.nextInt(height - 2);
-			if (grid[y][x].isBlocking() || isOccupiedByWild(x, y)) {
+			if (grid[y][x].isBlocking() || isOccupiedByWild(x, y) || isBossAt(x, y)) {
 				continue;
 			}
 			if (player != null && player.getX() == x && player.getY() == y) {

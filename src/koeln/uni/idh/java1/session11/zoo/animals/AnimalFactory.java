@@ -3,6 +3,9 @@ package koeln.uni.idh.java1.session11.zoo.animals;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import koeln.uni.idh.java1.session11.zoo.battle.Type;
+import koeln.uni.idh.java1.session11.zoo.battle.TypeChart;
+
 /**
  * Erzeugt frische Tier-Instanzen – sowohl für die Spieler-Auswahl als auch für
  * zufällige wilde Tiere in der Overworld. Jede Tierart bringt ihre Werte und
@@ -52,6 +55,22 @@ public final class AnimalFactory {
 	/** Erzeugt den Starter mit dem gegebenen Auswahl-Index (0-basiert). */
 	public static WalkingMammal createStarter(int starterIndex) {
 		return SPECIES[STARTER_INDICES[starterIndex]].get();
+	}
+
+	/**
+	 * Liefert das Starter-Zookémon, dessen Typ super-effektiv (2.0) gegen den
+	 * gegebenen Typ ist – also genau das „Konter-Starter". Damit rüstet sich
+	 * Prof. Nils gezielt gegen den Starter des Spielers aus.
+	 */
+	public static WalkingMammal counterStarter(Type type) {
+		for (int idx : STARTER_INDICES) {
+			WalkingMammal candidate = SPECIES[idx].get();
+			if (TypeChart.effectiveness(candidate.getType(), type) >= 2.0) {
+				return candidate;
+			}
+		}
+		// Sollte für die drei Starter-Typen nie eintreten.
+		return SPECIES[STARTER_INDICES[0]].get();
 	}
 
 	/** Ein zufälliges wildes Tier. */

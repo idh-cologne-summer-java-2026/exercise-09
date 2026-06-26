@@ -297,6 +297,22 @@ public abstract class WalkingMammal implements Drawable, Battler {
 		this.currentHp = getMaxHp();
 	}
 
+	/**
+	 * Bringt ein frisches Tier inklusive Entwicklung auf das Ziellevel – für
+	 * starke Trainer-Tiere (z. B. Prof. Nils), die in entwickelter Form und auf
+	 * hohem Level antreten. Heilt anschließend vollständig.
+	 */
+	public void developToLevel(int targetLevel) {
+		while (level < targetLevel) {
+			level++;
+			growStats();
+			if (!evolved && level >= evolutionLevel && evolvedName != null) {
+				evolve();
+			}
+		}
+		this.currentHp = getMaxHp();
+	}
+
 	/** Erhöht die Basiswerte um einen festen Betrag pro Level. */
 	private void growStats() {
 		int oldMax = stats.getMaxHp();

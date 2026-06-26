@@ -78,6 +78,10 @@ public class Renderer {
 					sb.append(BOLD).append(YELLOW).append('@').append(RESET);
 					continue;
 				}
+				if (world.isBossAt(x, y)) {
+					sb.append(BOLD).append(MAGENTA).append('N').append(RESET);
+					continue;
+				}
 				WalkingMammal animal = animalAt(wild, x, y);
 				if (animal != null) {
 					sb.append(BOLD).append(typeColor(animal.getType()))
@@ -95,7 +99,13 @@ public class Renderer {
 				.append(GRAY).append("Beenden: ").append(RESET).append("Q\n");
 		sb.append(GRAY).append("Wilde Tiere: ").append(RESET).append(wild.size())
 				.append(GRAY).append("    Team: ").append(RESET)
-				.append(teamSize).append("/").append(teamMax).append('\n');
+				.append(teamSize).append("/").append(teamMax);
+		if (world.isBossPresent()) {
+			sb.append(GRAY).append("    Ziel: ").append(RESET)
+					.append(MAGENTA).append("N").append(RESET)
+					.append(GRAY).append(" = Prof. Nils").append(RESET);
+		}
+		sb.append('\n');
 		print(sb);
 	}
 
@@ -122,6 +132,102 @@ public class Renderer {
 		}
 	}
 
+	// ---------------- Dialog & Intro ----------------
+
+	private static final int DIALOGUE_WIDTH = 56;
+
+	/** Eine Dialog-Textbox mit Sprecher (oder null = Erzähler) und Weiter-Hinweis. */
+	public void renderDialogue(String speaker, String text, boolean hasMore) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(CLEAR);
+		sb.append(BOLD).append("🦙⚔️  Zookémon").append(RESET).append("\n\n\n");
+		if (speaker != null) {
+			sb.append("  ").append(BOLD).append(MAGENTA).append(speaker).append(":").append(RESET).append('\n');
+		}
+		sb.append("  ").append(GRAY).append("┌").append(repeat('─', DIALOGUE_WIDTH + 2)).append("┐")
+				.append(RESET).append('\n');
+		for (String line : wrap(text, DIALOGUE_WIDTH)) {
+			sb.append("  ").append(GRAY).append("│ ").append(RESET).append(padRight(line, DIALOGUE_WIDTH))
+					.append(GRAY).append(" │").append(RESET).append('\n');
+		}
+		sb.append("  ").append(GRAY).append("└").append(repeat('─', DIALOGUE_WIDTH + 2)).append("┘")
+				.append(RESET).append("\n\n");
+		sb.append("  ").append(GRAY)
+				.append(hasMore ? "Taste drücken für weiter ▼" : "Taste drücken …")
+				.append(RESET).append('\n');
+		print(sb);
+	}
+
+	/** Bricht einen Text wortweise auf die gegebene Breite um. */
+	private List<String> wrap(String text, int width) {
+		List<String> lines = new java.util.ArrayList<>();
+		StringBuilder line = new StringBuilder();
+		for (String word : text.split(" ")) {
+			if (line.length() > 0 && line.length() + 1 + word.length() > width) {
+				lines.add(line.toString());
+				line.setLength(0);
+			}
+			if (line.length() > 0) {
+				line.append(' ');
+			}
+			line.append(word);
+		}
+		lines.add(line.toString());
+		return lines;
+	}
+
+	private String padRight(String s, int width) {
+		if (s.length() >= width) {
+			return s;
+		}
+		return s + repeat(' ', width - s.length());
+	}
+
+	/** Die Starter-Auswahl: drei wählbare Zookémon mit Typ und HP. */
+	public void renderStarterSelect(WalkingMammal[] options) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(CLEAR);
+		sb.append(BOLD).append("🦙⚔️  Wähle dein erstes Zookémon!").append(RESET).append("\n\n");
+		for (int i = 0; i < options.length; i++) {
+			WalkingMammal a = options[i];
+			sb.append("  ").append(YELLOW).append(i + 1).append(RESET).append(") ")
+					.append(BOLD).append(emojiFor(a.getSymbol())).append(a.getName()).append(RESET)
+					.append("  ").append(typeColor(a.getType())).append("(")
+					.append(a.getType().getDisplayName()).append(")").append(RESET)
+					.append(GRAY).append("  ").append(a.getMaxHp()).append(" HP").append(RESET)
+					.append('\n');
+		}
+		sb.append('\n').append(GRAY).append("Deine Wahl (Ziffer):").append(RESET).append('\n');
+		print(sb);
+	}
+
+	/** Abspann nach dem Sieg über den Erzfeind. */
+	public void renderEnding(WalkingMammal champion, String bossName, int victories) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(CLEAR).append("\n\n");
+		sb.append(BOLD).append(MAGENTA).append("  ✨🏆  S I E G  🏆✨").append(RESET).append("\n\n\n");
+		sb.append("  Du hast ").append(BOLD).append(bossName).append(RESET)
+				.append(" besiegt und bist der wahre Zookémon-Meister!\n\n");
+		sb.append("  ").append(emojiFor(champion.getSymbol())).append(BOLD).append(champion.getName())
+				.append(RESET);
+		if (champion.isEvolved()) {
+			sb.append(MAGENTA).append("★").append(RESET);
+		}
+		sb.append(GRAY).append("  Lv ").append(champion.getLevel()).append(RESET).append('\n');
+		sb.append("  ").append(GRAY).append("Gewonnene Kämpfe insgesamt: ").append(RESET)
+				.append(victories).append("\n\n\n");
+		sb.append(GRAY).append("  Taste drücken, um das Spiel zu beenden …").append(RESET).append('\n');
+		print(sb);
+	}
+
+	private String repeat(char c, int n) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < n; i++) {
+			sb.append(c);
+		}
+		return sb.toString();
+	}
+
 	// ---------------- Kampf ----------------
 
 	private static final int PROJECTILE_WIDTH = 38;
@@ -129,14 +235,19 @@ public class Renderer {
 	private static final int PLAYER_SPRITE_INDENT = 4;
 	private static final int LOG_LINES = 5;
 
-	/** Normaler Kampfbildschirm: mit Attacken-Menü, wenn der Spieler dran ist. */
-	public void renderBattle(Battle battle) {
-		renderScene(battle, true, null);
+	/**
+	 * Normaler Kampfbildschirm mit Attacken-Menü, wenn der Spieler dran ist.
+	 *
+	 * @param canCatch ob die Option „Fangen" angeboten wird (nur im Wildkampf)
+	 * @param canFlee  ob die Option „Fliehen" angeboten wird (nur im Wildkampf)
+	 */
+	public void renderBattle(Battle battle, boolean canCatch, boolean canFlee) {
+		renderScene(battle, true, null, canCatch, canFlee);
 	}
 
-	/** Intro: das wilde Tier erscheint – ohne Menü, für einen kurzen Moment. */
+	/** Intro: das Gegner-Tier erscheint – ohne Menü, für einen kurzen Moment. */
 	public void renderBattleIntro(Battle battle) {
-		renderScene(battle, false, null);
+		renderScene(battle, false, null, false, false);
 	}
 
 	/**
@@ -144,10 +255,11 @@ public class Renderer {
 	 * Effekten: fliegendes Projektil, Treffer-Blitz, Screen-Shake.
 	 */
 	public void renderBattleFx(Battle battle, BattleFx fx) {
-		renderScene(battle, false, fx);
+		renderScene(battle, false, fx, false, false);
 	}
 
-	private void renderScene(Battle battle, boolean showMenu, BattleFx fx) {
+	private void renderScene(Battle battle, boolean showMenu, BattleFx fx,
+			boolean canCatch, boolean canFlee) {
 		Battler player = battle.getPlayer();
 		Battler enemy = battle.getEnemy();
 		String pad = spaces(fx != null ? fx.shake : 0);
@@ -193,9 +305,15 @@ public class Renderer {
 				sb.append("  ").append(YELLOW).append(i + 1).append(RESET).append(") ")
 						.append(moveLine(moves.get(i), enemy)).append('\n');
 			}
-			sb.append("  ").append(YELLOW).append("Z").append(RESET).append(") Fangen   ")
-					.append(YELLOW).append("W").append(RESET).append(") Tier wechseln   ")
-					.append(YELLOW).append("F").append(RESET).append(") Fliehen\n");
+			sb.append("  ");
+			if (canCatch) {
+				sb.append(YELLOW).append("Z").append(RESET).append(") Fangen   ");
+			}
+			sb.append(YELLOW).append("W").append(RESET).append(") Tier wechseln");
+			if (canFlee) {
+				sb.append("   ").append(YELLOW).append("F").append(RESET).append(") Fliehen");
+			}
+			sb.append('\n');
 		}
 
 		print(sb);

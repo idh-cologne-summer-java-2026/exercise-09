@@ -37,6 +37,8 @@ public class BattleState implements GameState {
 	private final Battle battle;
 	private final Team team;
 	private final WalkingMammal enemy;
+	/** Gesetzt bei einem Trainerkampf (z. B. Prof. Nils); null im Wildkampf. */
+	private final Trainer trainer;
 
 	private boolean summaryShown = false;
 	private int epGained = 0;
@@ -47,11 +49,22 @@ public class BattleState implements GameState {
 	/** Bei einem erzwungenen Wechsel (aktives Tier besiegt) ist Abbrechen tabu. */
 	private boolean switchForced = false;
 
+	/** Wildkampf. */
 	public BattleState(Game game, Battle battle, WalkingMammal enemy) {
+		this(game, battle, enemy, null);
+	}
+
+	/** Trainerkampf, wenn {@code trainer} gesetzt ist – sonst Wildkampf. */
+	public BattleState(Game game, Battle battle, WalkingMammal enemy, Trainer trainer) {
 		this.game = game;
 		this.battle = battle;
 		this.team = game.getTeam();
 		this.enemy = enemy;
+		this.trainer = trainer;
+	}
+
+	private boolean isTrainerBattle() {
+		return trainer != null;
 	}
 
 	@Override
@@ -68,7 +81,8 @@ public class BattleState implements GameState {
 			game.getRenderer().renderVictory(battle.getPlayer(), enemy,
 					epGained, game.getTotalEp(), game.getVictories(), levelResult);
 		} else {
-			game.getRenderer().renderBattle(battle);
+			// Im Trainerkampf gibt es weder Fangen noch Fliehen.
+			game.getRenderer().renderBattle(battle, !isTrainerBattle(), !isTrainerBattle());
 		}
 	}
 
@@ -85,11 +99,19 @@ public class BattleState implements GameState {
 
 		switch (key) {
 		case 'f':
-			battle.flee();
-			runRound();
+			if (isTrainerBattle()) {
+				battle.getLog().add("Vor " + trainer.getName() + " kann man nicht fliehen!");
+			} else {
+				battle.flee();
+				runRound();
+			}
 			return;
 		case 'z':
-			tryCatch();
+			if (isTrainerBattle()) {
+				battle.getLog().add("Ein fremdes Zookémon kann man nicht fangen!");
+			} else {
+				tryCatch();
+			}
 			return;
 		case 'w':
 			openSwitchMenu(false);
@@ -275,6 +297,11 @@ public class BattleState implements GameState {
 	 * zweiten Druck (oder bei Flucht/Niederlage sofort) abschließen.
 	 */
 	private void advanceAfterBattle() {
+		// Trainerkampf: kein EP-Bildschirm, direkt auflösen (Sieg → Abspann).
+		if (isTrainerBattle()) {
+			resolveAndLeave();
+			return;
+		}
 		if (battle.getResult() == Battle.Result.SPIELER_GEWINNT && !summaryShown) {
 			epGained = experienceFor(enemy);
 			game.registerVictory(epGained);
@@ -315,10 +342,16 @@ public class BattleState implements GameState {
 
 		switch (battle.getResult()) {
 		case SPIELER_GEWINNT:
-			// Besiegtes Tier verschwindet, ein neues wildes Tier erscheint.
-			game.getWorld().removeWildAnimal(enemy);
-			game.spawnWildAnimal();
-			game.setState(new OverworldState(game));
+			if (isTrainerBattle()) {
+				// Erzfeind besiegt: Spiel gewonnen → Abspann.
+				game.markBossDefeated();
+				game.setState(new EndingState(game));
+			} else {
+				// Besiegtes Tier verschwindet, ein neues wildes Tier erscheint.
+				game.getWorld().removeWildAnimal(enemy);
+				game.spawnWildAnimal();
+				game.setState(new OverworldState(game));
+			}
 			break;
 		case GEFANGEN:
 			// Gefangenes Tier kommt geheilt ins Team, ein neues erscheint.
@@ -333,7 +366,12 @@ public class BattleState implements GameState {
 			break;
 		case SPIELER_VERLIERT:
 		default:
-			game.quit();
+			// Niederlage: Team voll heilen und zurück in die Overworld, um
+			// stärker zu werden und es erneut zu versuchen (auch gegen Nils).
+			for (WalkingMammal m : team.getMembers()) {
+				m.restore();
+			}
+			game.setState(new OverworldState(game));
 			break;
 		}
 	}

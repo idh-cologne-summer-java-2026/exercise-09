@@ -49,6 +49,16 @@ public class OverworldState implements GameState {
 			return; // andere Tasten ignorieren
 		}
 
+		// Läuft der Spieler gegen Prof. Nils, beginnt der Bosskampf (man tritt
+		// nicht auf sein Feld, sondern spricht ihn an).
+		WalkingMammal player = world.getPlayer();
+		player.setDirection(direction);
+		int[] target = player.peekStep();
+		if (world.isBossAt(target[0], target[1])) {
+			game.setState(game.bossEncounterDialogue());
+			return;
+		}
+
 		boolean moved = world.movePlayer(direction);
 		if (moved) {
 			healOnWater();
