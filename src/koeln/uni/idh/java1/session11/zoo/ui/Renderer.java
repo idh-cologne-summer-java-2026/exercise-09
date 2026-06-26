@@ -134,7 +134,9 @@ public class Renderer {
 
 	// ---------------- Dialog & Intro ----------------
 
-	private static final int DIALOGUE_WIDTH = 56;
+	// Bewusst schmal gehalten (passt zur 40 Zeichen breiten Welt), damit der
+	// Text auch in schmalen Terminals nicht mitten im Wort umbricht.
+	private static final int DIALOGUE_WIDTH = 36;
 
 	/**
 	 * Eine Dialog-Textbox mit Sprecher (oder null = Erzähler) und Weiter-Hinweis.
