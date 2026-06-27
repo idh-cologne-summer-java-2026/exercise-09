@@ -309,11 +309,8 @@ public class Game {
 		List<Page> pages = Arrays.asList(
 				new Page("Kommilitone", "Pssst! Auch von Nils' endlosen ASCII-Art-Aufgaben "
 						+ "die Nase voll?"),
-				new Page("Kommilitone", "Ich hocke hier seit drei Semestern und zeichne Lamas aus "
-						+ "Sternchen. Es reicht!"),
-				new Page("Kommilitone", "Und neulich – ein KREUZ aus Sternchen, einmal nach "
-						+ "rechts UND einmal nach links gedreht! Ich seh nachts nur noch "
-						+ "rotierende Sternchen …"),
+				new Page("Kommilitone", "Ich sitze hier seit drei Semestern und rotiere ASCII-Images "
+						+ "nach rechts und links. Es reicht!"),
 				new Page("Kommilitone", "Hier, nimm meine gesammelten Lösungs-Notizen. Damit hauen "
 						+ "deine Zookémon ordentlich härter zu."),
 				new Page(null, "Du erhältst die Notizen. Das ganze Team wird angriffslustiger: "
