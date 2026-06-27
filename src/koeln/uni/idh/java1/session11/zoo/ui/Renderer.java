@@ -106,6 +106,8 @@ public class Renderer {
 		sb.append('\n');
 		sb.append(GRAY).append("Bewegung: ").append(RESET)
 				.append("W/A/S/D   ")
+				.append(GRAY).append("Ton: ").append(RESET)
+				.append(Sound.isEnabled() ? "an" : "aus").append(" (M)   ")
 				.append(GRAY).append("Beenden: ").append(RESET).append("Q\n");
 		sb.append(GRAY).append("Wilde Tiere: ").append(RESET).append(wild.size())
 				.append(GRAY).append("    Team: ").append(RESET)
@@ -155,6 +157,82 @@ public class Renderer {
 		default:
 			return GRAY + tile.getSymbol() + RESET;
 		}
+	}
+
+	// ---------------- Titelbildschirm ----------------
+
+	/** Anzahl der Frames der Titel-Einblendung (vgl. {@link #renderTitle}). */
+	public static final int TITLE_FRAMES = 5;
+
+	/**
+	 * Der Titelbildschirm mit großem „ZOOKEMON"-Logo. Über {@code frame} (0..
+	 * {@link #TITLE_FRAMES}) wird die Einblendung gesteuert: Das Logo fliegt von
+	 * links herein und färbt sich dabei von Grau über Cyan bis Magenta – ein
+	 * kleiner Gruß an die rotierenden ASCII-Bilder aus den Übungen.
+	 *
+	 * @param frame  aktueller Animations-Schritt
+	 * @param prompt ob der „Taste drücken"-Hinweis schon angezeigt wird
+	 */
+	public void renderTitle(int frame, boolean prompt) {
+		String[] palette = { GRAY, BLUE, CYAN, BRIGHT_GREEN, MAGENTA };
+		String color = palette[Math.min(frame, palette.length - 1)];
+		int slide = Math.max(0, TITLE_FRAMES - frame);
+		String indent = spaces(4 + slide * 3);
+		boolean settled = frame >= TITLE_FRAMES;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(CLEAR).append("\n\n");
+		for (String line : Sprites.titleLogo()) {
+			sb.append(indent).append(BOLD).append(color).append(line).append(RESET).append('\n');
+		}
+		sb.append('\n');
+		String pre = settled ? "✨ " : "";
+		String post = settled ? " ✨" : "";
+		sb.append(spaces(8)).append(BOLD).append(MAGENTA)
+				.append(pre).append("Der Lachs, der sie alle fängt").append(post)
+				.append(RESET).append("\n");
+		sb.append(spaces(8)).append(GRAY)
+				.append("Entkomme Prof. Nils' ASCII-Welt!").append(RESET).append("\n\n\n");
+		if (prompt) {
+			sb.append(spaces(8)).append(BOLD).append(YELLOW)
+					.append("▶ Drücke eine Taste, um zu starten").append(RESET).append('\n');
+			sb.append(spaces(8)).append(GRAY)
+					.append("Ton: ").append(Sound.isEnabled() ? "an" : "aus")
+					.append(" (im Spiel mit M umschaltbar)").append(RESET).append('\n');
+		}
+		print(sb);
+	}
+
+	// ---------------- Bosskampf-Inszenierung ----------------
+
+	/**
+	 * Ganzseitige Boss-Inszenierung: das Bildnis von Prof. Nils, dazu zwei
+	 * Textzeilen. Über {@code frame} entstehen Screen-Shake und ein rotes
+	 * Aufblitzen – für den dramatischen Auftritt wie für den Wutausbruch in
+	 * Phase 2.
+	 *
+	 * @param line1 große Überschrift (z. B. der Name)
+	 * @param line2 Untertitel (z. B. „fordert dich heraus!")
+	 * @param frame Animations-Schritt (steuert Wackeln und Blitz)
+	 */
+	public void renderBossSplash(String line1, String line2, int frame) {
+		boolean flash = frame % 2 == 0;
+		String color = flash ? (BOLD + RED) : (BOLD + MAGENTA);
+		String pad = spaces(frame % 2 == 0 ? 2 : 0);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(CLEAR).append("\n\n");
+		for (String line : Sprites.nils()) {
+			sb.append(pad).append(spaces(8)).append(color).append(line).append(RESET).append('\n');
+		}
+		sb.append('\n');
+		sb.append(pad).append(spaces(8)).append(BOLD).append(RED).append("⚡ ").append(line1)
+				.append(" ⚡").append(RESET).append('\n');
+		if (line2 != null && !line2.isEmpty()) {
+			sb.append(pad).append(spaces(8)).append(BOLD).append(YELLOW).append(line2)
+					.append(RESET).append('\n');
+		}
+		print(sb);
 	}
 
 	// ---------------- Dialog & Intro ----------------

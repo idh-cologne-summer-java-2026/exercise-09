@@ -24,8 +24,14 @@ Am besten in einem echten Terminal (WASD ohne Enter). In der Eclipse-Konsole
 funktioniert es auch – dort jeweils **Taste + Enter** drücken.
 
 ## Steuerung
+**Titelbildschirm**
+- Beim Start fliegt das große „ZOOKEMON"-Logo herein – eine beliebige Taste
+  beginnt das Abenteuer.
+
 **Overworld**
 - `W` / `A` / `S` / `D` – bewegen
+- `M` – Ton an/aus (Treffer, Level-Aufstieg, Sieg und Nils' Auftritt sind mit
+  dem Terminal-Signalton untermalt)
 - `Q` – beenden
 - Wasserfelder (`~`) heilen ein bisschen.
 - Die **Farbe** eines wilden Tieres verrät sein Level: weiß (0–9), cyan
@@ -64,7 +70,9 @@ vor dem Kampf wird dein Team **voll geheilt**. Sein Zookémon ist **Level 50**,
 genau vom **Konter-Typ** deines Starters und entwickelt – du brauchst also ein
 starkes Team. Fangen kannst du es nicht, aber **fliehen ist erlaubt** (`F`),
 falls es brenzlig wird. Forderst du ihn erneut heraus, hat er wieder **volle
-HP**. **Tipp:** Fang dir gezielt ein Tier, dessen Typ *seinen* Typ kontert!
+HP**. Sein Auftritt wird groß inszeniert – und fällt sein Zookémon unter die
+Hälfte seiner HP, dreht es in **Phase 2** vor Wut auf (höherer Angriff).
+**Tipp:** Fang dir gezielt ein Tier, dessen Typ *seinen* Typ kontert!
 Verlierst du, wird dein Team geheilt und du landest wieder in der Welt – einfach
 weitertrainieren und es erneut versuchen.
 

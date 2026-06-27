@@ -2,6 +2,7 @@ package koeln.uni.idh.java1.session11.zoo.engine;
 
 import koeln.uni.idh.java1.session11.zoo.animals.WalkingMammal;
 import koeln.uni.idh.java1.session11.zoo.battle.Battle;
+import koeln.uni.idh.java1.session11.zoo.ui.Sound;
 import koeln.uni.idh.java1.session11.zoo.world.Npc;
 import koeln.uni.idh.java1.session11.zoo.world.Player;
 import koeln.uni.idh.java1.session11.zoo.world.Tile;
@@ -46,6 +47,9 @@ public class OverworldState implements GameState {
 		case 'q':
 			game.quit();
 			return;
+		case 'm':
+			Sound.toggle();
+			return; // Ton an/aus, sonst nichts tun
 		default:
 			return; // andere Tasten ignorieren
 		}

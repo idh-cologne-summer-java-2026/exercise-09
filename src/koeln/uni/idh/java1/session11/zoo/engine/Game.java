@@ -180,17 +180,22 @@ public class Game {
 		return bossDefeated;
 	}
 
-	/** Startet das Spiel: Intro-Dialog → Starter-Wahl → Overworld → Hauptschleife. */
+	/** Startet das Spiel: Titel → Intro-Dialog → Starter-Wahl → Overworld → Hauptschleife. */
 	public void start() {
 		try {
 			this.running = true;
-			setState(introDialogue());
+			setState(new TitleState(this));
 			loop();
 		} finally {
 			renderer.clear();
 			input.restore();
 			System.out.println("Danke fürs Spielen! 🦙");
 		}
+	}
+
+	/** Vom Titelbildschirm aufgerufen: startet die eigentliche Geschichte. */
+	public void startStory() {
+		setState(introDialogue());
 	}
 
 	// ---------------- Intro & Erzfeind ----------------

@@ -252,6 +252,18 @@ public abstract class WalkingMammal implements Drawable, Battler {
 		}
 	}
 
+	/**
+	 * Hebt den Angriff um mehrere Stufen an – z. B. wenn Prof. Nils' Zookémon in
+	 * Phase 2 vor Wut aufdreht. Begrenzt auf die übliche Höchststufe (+6).
+	 */
+	public void raiseAttack(int stages) {
+		for (int i = 0; i < stages; i++) {
+			if (attackStage < 6) {
+				attackStage++;
+			}
+		}
+	}
+
 	@Override
 	public void lowerDefense() {
 		if (defenseStage > -6) {

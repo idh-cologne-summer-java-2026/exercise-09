@@ -10,6 +10,7 @@ import koeln.uni.idh.java1.session11.zoo.battle.StepResult;
 import koeln.uni.idh.java1.session11.zoo.battle.Type;
 import koeln.uni.idh.java1.session11.zoo.ui.BattleFx;
 import koeln.uni.idh.java1.session11.zoo.ui.Renderer;
+import koeln.uni.idh.java1.session11.zoo.ui.Sound;
 
 /**
  * Der Kampfbildschirm. Beim Betreten erscheint kurz das wilde Tier (Intro).
@@ -27,6 +28,8 @@ public class BattleState implements GameState {
 	private static final int HP_FRAMES = 6;
 	private static final long HP_FRAME_MS = 28;
 	private static final long INTRO_MS = 650;
+	private static final long BOSS_SPLASH_MS = 160;
+	private static final int BOSS_SPLASH_FRAMES = 8;
 
 	/** Muss zur PROJECTILE_WIDTH des Renderers passen. */
 	private static final int PROJECTILE_WIDTH = 38;
@@ -49,6 +52,9 @@ public class BattleState implements GameState {
 	/** Bei einem erzwungenen Wechsel (aktives Tier besiegt) ist Abbrechen tabu. */
 	private boolean switchForced = false;
 
+	/** Ob Prof. Nils' Zookémon in Phase 2 (unter 50 % HP) bereits aufgedreht hat. */
+	private boolean bossEnraged = false;
+
 	/** Wildkampf. */
 	public BattleState(Game game, Battle battle, WalkingMammal enemy) {
 		this(game, battle, enemy, null);
@@ -69,8 +75,26 @@ public class BattleState implements GameState {
 
 	@Override
 	public void onEnter() {
+		if (isTrainerBattle()) {
+			playBossSplash(trainer.getName().toUpperCase() + " stellt sich dir!",
+					"Die Festung erbebt …");
+		}
 		game.getRenderer().renderBattleIntro(battle);
 		pause(INTRO_MS);
+	}
+
+	/**
+	 * Dramatische Boss-Inszenierung: Prof. Nils' Bildnis erscheint, der Bildschirm
+	 * wackelt und blitzt rot, dazu ertönt ein Grollen. Wird für den Auftritt und
+	 * für den Wutausbruch in Phase 2 verwendet.
+	 */
+	private void playBossSplash(String line1, String line2) {
+		Renderer renderer = game.getRenderer();
+		Sound.bossRoar();
+		for (int frame = 0; frame < BOSS_SPLASH_FRAMES; frame++) {
+			renderer.renderBossSplash(line1, line2, frame);
+			pause(BOSS_SPLASH_MS);
+		}
 	}
 
 	@Override
@@ -218,6 +242,13 @@ public class BattleState implements GameState {
 			if (hit != null) {
 				flashImpact(hit);
 				animateHp(player, oldPlayerHp, newPlayerHp, oldEnemyHp, newEnemyHp);
+				boolean fainted = (hit == enemy && newEnemyHp == 0)
+						|| (hit == battle.getPlayer() && newPlayerHp == 0);
+				if (fainted) {
+					Sound.faint();
+				} else {
+					Sound.hit();
+				}
 				pause(AFTER_HIT_PAUSE_MS);
 			}
 
@@ -225,6 +256,27 @@ public class BattleState implements GameState {
 			player.setCurrentHp(newPlayerHp);
 			enemy.setCurrentHp(newEnemyHp);
 		}
+
+		maybeEnrageBoss();
+	}
+
+	/**
+	 * Phase 2 des Bosskampfs: Fällt Prof. Nils' Zookémon erstmals unter die Hälfte
+	 * seiner HP (und lebt noch), dreht es vor Wut auf – kurze Inszenierung, dann
+	 * ein dauerhafter Angriffs-Schub für den Rest des Kampfes.
+	 */
+	private void maybeEnrageBoss() {
+		if (!isTrainerBattle() || bossEnraged || enemy.isFainted()) {
+			return;
+		}
+		if (enemy.getCurrentHp() > enemy.getMaxHp() / 2) {
+			return;
+		}
+		bossEnraged = true;
+		playBossSplash(trainer.getName().toUpperCase() + " WIRD WÜTEND!",
+				"Phase 2 – sein Angriff steigt!");
+		enemy.raiseAttack(1);
+		battle.getLog().add(trainer.getName() + " dreht vor Wut auf – der Angriff steigt!");
 	}
 
 	private Battler whoWasHit(int oldPlayerHp, int newPlayerHp, int oldEnemyHp, int newEnemyHp) {
@@ -302,9 +354,13 @@ public class BattleState implements GameState {
 			epGained = experienceFor(enemy);
 			game.registerVictory(epGained);
 			levelResult = game.getPlayer().gainExperience(epGained);
+			if (levelResult.leveledUp()) {
+				Sound.levelUp();
+			}
 			if (levelResult.isEvolved()) {
 				playEvolution(game.getPlayer(), levelResult.getOldName(), levelResult.getNewName());
 			}
+			Sound.victory();
 			summaryShown = true;
 			return; // Sieg-Bildschirm folgt beim nächsten render()
 		}
@@ -325,6 +381,7 @@ public class BattleState implements GameState {
 	/** Entwicklungs-Animation: das Tier flackert zwischen Bild und Silhouette. */
 	private void playEvolution(WalkingMammal animal, String oldName, String newName) {
 		Renderer renderer = game.getRenderer();
+		Sound.evolve();
 		long[] delays = { 320, 320, 240, 240, 160, 160, 110, 110, 70, 70 };
 		boolean silhouette = true;
 		for (long delay : delays) {

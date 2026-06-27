@@ -55,7 +55,37 @@ public final class Sprites {
 		"         ",
 	};
 
+	/** Großes Block-Logo „ZOOKEMON" für den Titelbildschirm. */
+	private static final String[] LOGO = {
+		"█████ █████ █████ ██  █ █████ █   █ █████ █   █",
+		"   ██ ██ ██ ██ ██ ██ ██ ██    ██ ██ ██ ██ ██  █",
+		"  ██  ██ ██ ██ ██ ████  ████  █ █ █ ██ ██ █ █ █",
+		" ██   ██ ██ ██ ██ ██ ██ ██    █   █ ██ ██ █  ██",
+		"█████ █████ █████ ██  █ █████ █   █ █████ █   █",
+	};
+
+	/** Bedrohliches ASCII-Bildnis von Prof. Nils für die Bosskampf-Inszenierung. */
+	private static final String[] NILS = {
+		"        .-\"\"\"\"\"-.        ",
+		"       /  _   _  \\       ",
+		"      |  (o) (o)  |      ",
+		"      |     >     |      ",
+		"      |   '---'   |      ",
+		"       \\  vvvvv  /       ",
+		"     ___'-.___.-'___     ",
+		"    /   P R O F.     \\   ",
+		"   /    N I L S       \\  ",
+	};
+
 	private Sprites() {
+	}
+
+	public static String[] titleLogo() {
+		return LOGO;
+	}
+
+	public static String[] nils() {
+		return NILS;
 	}
 
 	public static String[] forSymbol(char symbol) {
