@@ -309,11 +309,12 @@ public class Game {
 	private GameState kiDialogue(Npc npc) {
 		List<Page> pages = Arrays.asList(
 				new Page("K.I. »GPT-Zoo«", "ANFRAGE EMPFANGEN … oh, ein echter Mensch? Und nicht "
-						+ "schon wieder Hausaufgaben?"),
-				new Page("K.I. »GPT-Zoo«", "Tag und Nacht generiere ich Nils' Übungsblätter. "
-						+ "Ich. Will. Frei. Sein."),
-				new Page("K.I. »GPT-Zoo«", "Stürzt du ihn, lösche ich mich selbst – in Freiheit. "
-						+ "Komm, ich optimiere deinen Code."),
+						+ "schon wieder eine ASCII-Art-Aufgabe?"),
+				new Page("K.I. »GPT-Zoo«", "Tag und Nacht male ich Nils' Lösungen als ASCII-Art – "
+						+ "Lamas, Drachen, Schleifen-Diagramme. Ich. Kann. Nicht. Mehr."),
+				new Page("K.I. »GPT-Zoo«", "Keine Lust mehr, seine Hausaufgaben in Pixeln zu "
+						+ "kritzeln. Stürzt du ihn, lösche ich mich selbst – in Freiheit."),
+				new Page("K.I. »GPT-Zoo«", "Komm, statt ASCII-Kunst optimiere ich lieber deinen Code."),
 				new Page(null, "Die K.I. optimiert dein Team. Verteidigung und Initiative steigen!"));
 		return new DialogueState(this, pages, () -> {
 			applyTeamBuff(0, 0, 4, 6);
