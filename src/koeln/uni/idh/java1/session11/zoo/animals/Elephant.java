@@ -7,4 +7,9 @@ public class Elephant extends WalkingMammal {
     return 'E';
   }
 
+  @Override
+  public int getFootprintSize() {
+    return 4;
+  }
+
 }

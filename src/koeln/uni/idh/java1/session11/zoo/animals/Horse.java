@@ -59,6 +59,11 @@ public class Horse extends WalkingMammal {
 	public char getSymbol() {
 		return 'H';
 	}
+
+	@Override
+	public int getFootprintSize() {
+		return 2;
+	}
 	
 	
 

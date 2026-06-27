@@ -47,9 +47,68 @@ public class AsciiImage {
 	}
 
 	public void dot(int x, int y, WalkingMammal wm) {
-		image[y][x] = wm.getSymbol();
+		int footprintSize = Math.max(1, wm.getFootprintSize());
+		int sideLength = (int) Math.ceil(Math.sqrt(footprintSize));
+		int placedCells = 0;
+
+		for (int row = 0; row < sideLength && placedCells < footprintSize; row++) {
+			for (int column = 0; column < sideLength && placedCells < footprintSize; column++) {
+				ensureCapacity(x + column, y + row);
+				image[y + row][x + column] = wm.getSymbol();
+				placedCells++;
+			}
+		}
 	}
 
+	public void dot(int x, int y, Drawable drawable) {
+		ensureCapacity(x, y);
+		image[y][x] = drawable.getSymbol();
+	}
+
+	public void drawEnclosure(int x, int y, int width, int height) {
+		if (width <= 1 || height <= 1) {
+			throw new IllegalArgumentException("Enclosure size must be at least 2x2.");
+		}
+
+		ensureCapacity(x + width - 1, y + height - 1);
+		for (int row = y; row < y + height; row++) {
+			for (int column = x; column < x + width; column++) {
+				if (row == y || row == y + height - 1 || column == x || column == x + width - 1) {
+					image[row][column] = black;
+				}
+			}
+		}
+	}
+
+	private void ensureCapacity(int x, int y) {
+		if (x < 0 || y < 0) {
+			throw new IllegalArgumentException("Coordinates must be non-negative.");
+		}
+
+		if (x < image[0].length && y < image.length) {
+			return;
+		}
+
+		int newWidth = Math.max(image[0].length, x + 1);
+		int newHeight = Math.max(image.length, y + 1);
+		char[][] expanded = new char[newHeight][newWidth];
+
+		for (int row = 0; row < image.length; row++) {
+			for (int column = 0; column < image[row].length; column++) {
+				expanded[row][column] = image[row][column];
+			}
+		}
+
+		for (int row = 0; row < expanded.length; row++) {
+			for (int column = 0; column < expanded[row].length; column++) {
+				if (row >= image.length || column >= image[row].length) {
+					expanded[row][column] = white;
+				}
+			}
+		}
+
+		image = expanded;
+	}
 
 
 	/**

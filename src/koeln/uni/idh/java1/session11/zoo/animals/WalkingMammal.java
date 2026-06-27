@@ -82,6 +82,10 @@ public abstract class WalkingMammal implements Drawable {
 	 */
 	public abstract char getSymbol();
 
+	public int getFootprintSize() {
+		return 1;
+	}
+
 	public int getX() {
 		return x;
 	}

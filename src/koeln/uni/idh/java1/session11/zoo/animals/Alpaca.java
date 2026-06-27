@@ -9,6 +9,11 @@ public class Alpaca extends WalkingMammal {
 	public char getSymbol() {
 		return 'A';
 	}
+
+	@Override
+	public int getFootprintSize() {
+		return 1;
+	}
 	
 	public void spit() {
 		System.out.println("Ein Alpaka spuckt.");
