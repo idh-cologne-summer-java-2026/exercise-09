@@ -8,11 +8,11 @@ läufst du in eines hinein, startet ein **rundenbasierter Pokémon-Kampf**: Jede
 Tier hat HP, Werte, einen Typ und Attacken. Typ-Effektivität und etwas Zufall
 entscheiden über den Schaden. Wer zuerst auf 0 HP fällt, verliert.
 
-**Story & Ziel:** Prof. Nils hat dich in seiner **ASCII-Welt** gefangen. Er lässt
+**Story & Ziel:** Der Professor hat dich in seiner **ASCII-Welt** gefangen. Er lässt
 dich erst frei, wenn du deine Java-Fähigkeiten so weit trainiert hast, dass du
 ihn besiegen und diese **Java-Welt zerstören** kannst. Er hat sich genau das
 Zookémon geschnappt, das gegen dein Starter-Zookémon stark ist. Werde durch
-Kämpfe und Fangen stärker, bis du ihn in seiner Festung (Symbol `N`) schlägst –
+Kämpfe und Fangen stärker, bis du ihn in seiner Festung (Symbol `P`) schlägst –
 dann zerfällt die Welt und du bist frei!
 
 ## Starten
@@ -30,7 +30,7 @@ funktioniert es auch – dort jeweils **Taste + Enter** drücken.
 
 **Overworld**
 - `W` / `A` / `S` / `D` – bewegen
-- `M` – Ton an/aus (Treffer, Level-Aufstieg, Sieg und Nils' Auftritt sind mit
+- `M` – Ton an/aus (Treffer, Level-Aufstieg, Sieg und der Auftritt des Professors sind mit
   dem Terminal-Signalton untermalt)
 - `Q` – beenden
 - Wasserfelder (`~`) heilen ein bisschen.
@@ -58,14 +58,14 @@ Nicht alles in der Welt ist ein Zookémon: Zwei **Verbündete** stehen an festen
 Orten und sind an ihren Sonderzeichen zu erkennen (keine Tier-Buchstaben).
 Lauf gegen sie, um mit ihnen zu reden – beim **ersten Gespräch** geben sie dir
 einen dauerhaften Buff fürs ganze Team (auch für später gefangene Tiere).
-- `&` **Kommilitone** (im Baum-Hain): hat Nils' ASCII-Aufgaben ebenfalls satt und
+- `&` **Kommilitone** (im Baum-Hain): hat die ASCII-Aufgaben des Professors ebenfalls satt und
   teilt seine Lösungs-Notizen → **+Angriff**.
 - `?` **K.I. »GPT-Zoo«** (am Wasser-Teich): wird ständig für Hausaufgaben
-  missbraucht und will Nils stürzen → optimiert dein Team: **+Verteidigung &
+  missbraucht und will den Professor stürzen → optimiert dein Team: **+Verteidigung &
   Initiative**.
 
-## Prof. Nils, der Erzfeind
-Nils steht an einem festen Ort (`N`). Lauf gegen ihn, um ihn herauszufordern –
+## Der Professor, der Erzfeind
+Der Professor steht an einem festen Ort (`P`). Lauf gegen ihn, um ihn herauszufordern –
 vor dem Kampf wird dein Team **voll geheilt**. Sein Zookémon ist **Level 50**,
 genau vom **Konter-Typ** deines Starters und entwickelt – du brauchst also ein
 starkes Team. Fangen kannst du es nicht, aber **fliehen ist erlaubt** (`F`),

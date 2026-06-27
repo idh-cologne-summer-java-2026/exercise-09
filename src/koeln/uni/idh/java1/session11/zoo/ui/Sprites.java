@@ -64,8 +64,8 @@ public final class Sprites {
 		"█████ █████ █████ ██  █ █████ █   █ █████ █   █",
 	};
 
-	/** Bedrohliches ASCII-Bildnis von Prof. Nils für die Bosskampf-Inszenierung. */
-	private static final String[] NILS = {
+	/** Bedrohliches ASCII-Bildnis des Professors für die Bosskampf-Inszenierung. */
+	private static final String[] PROFESSOR = {
 		"        .-\"\"\"\"\"-.        ",
 		"       /  _   _  \\       ",
 		"      |  (o) (o)  |      ",
@@ -73,8 +73,8 @@ public final class Sprites {
 		"      |   '---'   |      ",
 		"       \\  vvvvv  /       ",
 		"     ___'-.___.-'___     ",
-		"    /   P R O F.     \\   ",
-		"   /    N I L S       \\  ",
+		"    /   PROFESSOR    \\   ",
+		"   /                  \\  ",
 	};
 
 	private Sprites() {
@@ -84,8 +84,8 @@ public final class Sprites {
 		return LOGO;
 	}
 
-	public static String[] nils() {
-		return NILS;
+	public static String[] professor() {
+		return PROFESSOR;
 	}
 
 	public static String[] forSymbol(char symbol) {

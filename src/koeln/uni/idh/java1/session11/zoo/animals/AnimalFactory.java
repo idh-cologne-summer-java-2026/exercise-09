@@ -60,7 +60,7 @@ public final class AnimalFactory {
 	/**
 	 * Liefert das Starter-Zookémon, dessen Typ super-effektiv (2.0) gegen den
 	 * gegebenen Typ ist – also genau das „Konter-Starter". Damit rüstet sich
-	 * Prof. Nils gezielt gegen den Starter des Spielers aus.
+	 * der Professor gezielt gegen den Starter des Spielers aus.
 	 */
 	public static WalkingMammal counterStarter(Type type) {
 		for (int idx : STARTER_INDICES) {

@@ -4,7 +4,7 @@ import koeln.uni.idh.java1.session11.zoo.animals.WalkingMammal;
 
 /**
  * Ein Trainer als Kampfgegner – im Gegensatz zu wilden Tieren. Aktuell gibt es
- * genau einen: den Erzfeind <b>Prof. Nils</b>, der mit einem einzigen, starken
+ * genau einen: den Erzfeind: <b>Der Professor</b>, der mit einem einzigen, starken
  * Signatur-Zookémon antritt (der entwickelten Konterform deines Starters).
  */
 public class Trainer {

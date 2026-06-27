@@ -23,7 +23,7 @@ public class World {
 
 	private WalkingMammal player;
 
-	// Position des Erzfeindes Prof. Nils (fester Ort). -1 = nicht (mehr) da.
+	// Position des Professors (fester Ort). -1 = nicht (mehr) da.
 	private int bossX = -1;
 	private int bossY = -1;
 
@@ -100,7 +100,7 @@ public class World {
 	}
 
 	/**
-	 * Stellt Prof. Nils an einen festen Ort und baut eine kleine Festung um ihn:
+	 * Stellt den Professor an einen festen Ort und baut eine kleine Festung um ihn:
 	 * einen Mauerring mit einem einzelnen Tor an der Unterseite. Drinnen ist
 	 * alles begehbar, sodass man durch das Tor zu ihm gelangt.
 	 */
@@ -121,7 +121,7 @@ public class World {
 				grid[yy][xx] = ring ? Tile.WAND : Tile.GRAS;
 			}
 		}
-		// Tor an der Unterseite (Richtung Spielfeld) und das Feld von Nils frei.
+		// Tor an der Unterseite (Richtung Spielfeld) und das Feld des Professors frei.
 		if (cy + r < height - 1) {
 			grid[cy + r][cx] = Tile.GRAS;
 		}
@@ -144,7 +144,7 @@ public class World {
 		return bossY;
 	}
 
-	/** Entfernt Prof. Nils aus der Welt (nachdem er besiegt wurde). */
+	/** Entfernt den Professor aus der Welt (nachdem er besiegt wurde). */
 	public void removeBoss() {
 		this.bossX = -1;
 		this.bossY = -1;

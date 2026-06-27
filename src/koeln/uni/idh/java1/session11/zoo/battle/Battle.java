@@ -42,7 +42,7 @@ public class Battle {
 
 	/**
 	 * @param wild true = wildes Tier (fangbar, Flucht möglich), false =
-	 *             Trainerkampf (z. B. gegen Prof. Nils).
+	 *             Trainerkampf (z. B. gegen den Professor).
 	 */
 	public Battle(Battler player, Battler enemy, Random rng, boolean wild) {
 		this.player = player;

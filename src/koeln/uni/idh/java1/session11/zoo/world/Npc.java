@@ -3,7 +3,7 @@ package koeln.uni.idh.java1.session11.zoo.world;
 /**
  * Eine ansprechbare Figur in der Welt, die <em>kein</em> Zookémon ist (z. B. ein
  * Kommilitone oder eine K.I.). NPCs stehen an einem festen Ort, blockieren wie
- * Prof. Nils ihr Feld (man spricht sie an, statt darauf zu treten) und geben dem
+ * der Professor ihr Feld (man spricht sie an, statt darauf zu treten) und geben dem
  * Spieler beim ersten Gespräch einen Buff.
  *
  * Diese Klasse hält nur die welt-/darstellungsrelevanten Daten (Position, Glyph,

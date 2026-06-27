@@ -253,7 +253,7 @@ public abstract class WalkingMammal implements Drawable, Battler {
 	}
 
 	/**
-	 * Hebt den Angriff um mehrere Stufen an – z. B. wenn Prof. Nils' Zookémon in
+	 * Hebt den Angriff um mehrere Stufen an – z. B. wenn des Professors Zookémon in
 	 * Phase 2 vor Wut aufdreht. Begrenzt auf die übliche Höchststufe (+6).
 	 */
 	public void raiseAttack(int stages) {
@@ -311,7 +311,7 @@ public abstract class WalkingMammal implements Drawable, Battler {
 
 	/**
 	 * Bringt ein frisches Tier inklusive Entwicklung auf das Ziellevel – für
-	 * starke Trainer-Tiere (z. B. Prof. Nils), die in entwickelter Form und auf
+	 * starke Trainer-Tiere (z. B. der Professor), die in entwickelter Form und auf
 	 * hohem Level antreten. Heilt anschließend vollständig.
 	 */
 	public void developToLevel(int targetLevel) {

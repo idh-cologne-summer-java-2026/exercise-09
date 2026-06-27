@@ -1,7 +1,7 @@
 package koeln.uni.idh.java1.session11.zoo.engine;
 
 /**
- * Der Abspann nach dem Sieg über Prof. Nils. Zeigt den Sieg-Bildschirm; ein
+ * Der Abspann nach dem Sieg über den Professor. Zeigt den Sieg-Bildschirm; ein
  * Tastendruck beendet das Spiel.
  */
 public class EndingState implements GameState {
@@ -14,7 +14,7 @@ public class EndingState implements GameState {
 
 	@Override
 	public void render() {
-		game.getRenderer().renderEnding(game.getPlayer(), "Prof. Nils", game.getVictories());
+		game.getRenderer().renderEnding(game.getPlayer(), "den Professor", game.getVictories());
 	}
 
 	@Override

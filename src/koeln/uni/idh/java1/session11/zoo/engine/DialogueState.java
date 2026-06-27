@@ -8,7 +8,7 @@ import java.util.List;
  * Seite weiter; nach der letzten Seite wird {@link #onFinish} ausgeführt (das
  * z. B. in den nächsten Zustand wechselt).
  *
- * Wiederverwendbar für das Intro, Prof. Nils' Kampfansage und den Abspann.
+ * Wiederverwendbar für das Intro, des Professors Kampfansage und den Abspann.
  */
 public class DialogueState implements GameState {
 

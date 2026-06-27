@@ -40,7 +40,7 @@ public class BattleState implements GameState {
 	private final Battle battle;
 	private final Team team;
 	private final WalkingMammal enemy;
-	/** Gesetzt bei einem Trainerkampf (z. B. Prof. Nils); null im Wildkampf. */
+	/** Gesetzt bei einem Trainerkampf (z. B. der Professor); null im Wildkampf. */
 	private final Trainer trainer;
 
 	private boolean summaryShown = false;
@@ -52,7 +52,7 @@ public class BattleState implements GameState {
 	/** Bei einem erzwungenen Wechsel (aktives Tier besiegt) ist Abbrechen tabu. */
 	private boolean switchForced = false;
 
-	/** Ob Prof. Nils' Zookémon in Phase 2 (unter 50 % HP) bereits aufgedreht hat. */
+	/** Ob des Professors Zookémon in Phase 2 (unter 50 % HP) bereits aufgedreht hat. */
 	private boolean bossEnraged = false;
 
 	/** Wildkampf. */
@@ -84,7 +84,7 @@ public class BattleState implements GameState {
 	}
 
 	/**
-	 * Dramatische Boss-Inszenierung: Prof. Nils' Bildnis erscheint, der Bildschirm
+	 * Dramatische Boss-Inszenierung: des Professors Bildnis erscheint, der Bildschirm
 	 * wackelt und blitzt rot, dazu ertönt ein Grollen. Wird für den Auftritt und
 	 * für den Wutausbruch in Phase 2 verwendet.
 	 */
@@ -105,7 +105,7 @@ public class BattleState implements GameState {
 			game.getRenderer().renderVictory(battle.getPlayer(), enemy,
 					epGained, game.getTotalEp(), game.getVictories(), levelResult);
 		} else {
-			// Im Trainerkampf kann man nicht fangen, aber fliehen (Nils ist Level 50).
+			// Im Trainerkampf kann man nicht fangen, aber fliehen (der Professor ist Level 50).
 			game.getRenderer().renderBattle(battle, !isTrainerBattle(), true);
 		}
 	}
@@ -261,7 +261,7 @@ public class BattleState implements GameState {
 	}
 
 	/**
-	 * Phase 2 des Bosskampfs: Fällt Prof. Nils' Zookémon erstmals unter die Hälfte
+	 * Phase 2 des Bosskampfs: Fällt des Professors Zookémon erstmals unter die Hälfte
 	 * seiner HP (und lebt noch), dreht es vor Wut auf – kurze Inszenierung, dann
 	 * ein dauerhafter Angriffs-Schub für den Rest des Kampfes.
 	 */
@@ -426,7 +426,7 @@ public class BattleState implements GameState {
 		case SPIELER_VERLIERT:
 		default:
 			// Niederlage: Team voll heilen und zurück in die Overworld, um
-			// stärker zu werden und es erneut zu versuchen (auch gegen Nils).
+			// stärker zu werden und es erneut zu versuchen (auch gegen den Professor).
 			for (WalkingMammal m : team.getMembers()) {
 				m.restore();
 			}

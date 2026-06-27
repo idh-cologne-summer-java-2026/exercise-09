@@ -81,7 +81,7 @@ public class Renderer {
 					continue;
 				}
 				if (world.isBossAt(x, y)) {
-					sb.append(BOLD).append(MAGENTA).append('N').append(RESET);
+					sb.append(BOLD).append(MAGENTA).append('P').append(RESET);
 					continue;
 				}
 				Npc npc = world.npcAt(x, y);
@@ -114,8 +114,8 @@ public class Renderer {
 				.append(teamSize).append("/").append(teamMax);
 		if (world.isBossPresent()) {
 			sb.append(GRAY).append("    Ziel: ").append(RESET)
-					.append(MAGENTA).append("N").append(RESET)
-					.append(GRAY).append(" = Prof. Nils").append(RESET);
+					.append(MAGENTA).append("P").append(RESET)
+					.append(GRAY).append(" = Der Professor").append(RESET);
 		}
 		sb.append('\n');
 		// Legende: was die Tier-Farben über das Level verraten.
@@ -192,7 +192,7 @@ public class Renderer {
 				.append(pre).append("Der Lachs, der sie alle fängt").append(post)
 				.append(RESET).append("\n");
 		sb.append(spaces(8)).append(GRAY)
-				.append("Entkomme Prof. Nils' ASCII-Welt!").append(RESET).append("\n\n\n");
+				.append("Entkomme der ASCII-Welt des Professors!").append(RESET).append("\n\n\n");
 		if (prompt) {
 			sb.append(spaces(8)).append(BOLD).append(YELLOW)
 					.append("▶ Drücke eine Taste, um zu starten").append(RESET).append('\n');
@@ -206,7 +206,7 @@ public class Renderer {
 	// ---------------- Bosskampf-Inszenierung ----------------
 
 	/**
-	 * Ganzseitige Boss-Inszenierung: das Bildnis von Prof. Nils, dazu zwei
+	 * Ganzseitige Boss-Inszenierung: das Bildnis des Professors, dazu zwei
 	 * Textzeilen. Über {@code frame} entstehen Screen-Shake und ein rotes
 	 * Aufblitzen – für den dramatischen Auftritt wie für den Wutausbruch in
 	 * Phase 2.
@@ -222,7 +222,7 @@ public class Renderer {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append(CLEAR).append("\n\n");
-		for (String line : Sprites.nils()) {
+		for (String line : Sprites.professor()) {
 			sb.append(pad).append(spaces(8)).append(color).append(line).append(RESET).append('\n');
 		}
 		sb.append('\n');

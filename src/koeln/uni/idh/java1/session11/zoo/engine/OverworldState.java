@@ -54,7 +54,7 @@ public class OverworldState implements GameState {
 			return; // andere Tasten ignorieren
 		}
 
-		// Läuft der Spieler gegen Prof. Nils, beginnt der Bosskampf (man tritt
+		// Läuft der Spieler gegen den Professor, beginnt der Bosskampf (man tritt
 		// nicht auf sein Feld, sondern spricht ihn an).
 		WalkingMammal player = world.getPlayer();
 		player.setDirection(direction);
