@@ -60,11 +60,12 @@ einen dauerhaften Buff fürs ganze Team (auch für später gefangene Tiere).
 
 ## Prof. Nils, der Erzfeind
 Nils steht an einem festen Ort (`N`). Lauf gegen ihn, um ihn herauszufordern –
-vor dem Kampf wird dein Team **voll geheilt**, du kämpfst aber nicht fangbar und
-ohne Fluchtmöglichkeit. Sein Zookémon ist genau vom **Konter-Typ** deines
-Starters und entwickelt sowie hochstufig – du brauchst also ein starkes Team.
-**Tipp:** Fang dir gezielt ein Tier, dessen Typ *seinen* Typ kontert! Verlierst
-du, wird dein Team geheilt und du landest wieder in der Welt – einfach
+vor dem Kampf wird dein Team **voll geheilt**. Sein Zookémon ist **Level 50**,
+genau vom **Konter-Typ** deines Starters und entwickelt – du brauchst also ein
+starkes Team. Fangen kannst du es nicht, aber **fliehen ist erlaubt** (`F`),
+falls es brenzlig wird. Forderst du ihn erneut heraus, hat er wieder **volle
+HP**. **Tipp:** Fang dir gezielt ein Tier, dessen Typ *seinen* Typ kontert!
+Verlierst du, wird dein Team geheilt und du landest wieder in der Welt – einfach
 weitertrainieren und es erneut versuchen.
 
 ## Tipp

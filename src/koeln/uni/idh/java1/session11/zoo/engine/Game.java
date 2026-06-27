@@ -30,7 +30,7 @@ public class Game {
 	private static final int BOSS_X = WORLD_WIDTH - 4;
 	private static final int BOSS_Y = 3;
 	/** Level (entwickelte Form), auf das Prof. Nils' Zookémon gebracht wird. */
-	private static final int BOSS_LEVEL = 18;
+	private static final int BOSS_LEVEL = 50;
 
 	/** Feste Standorte der beiden hilfreichen NPCs (unten links / unten rechts). */
 	private static final int FRIEND1_X = 5;

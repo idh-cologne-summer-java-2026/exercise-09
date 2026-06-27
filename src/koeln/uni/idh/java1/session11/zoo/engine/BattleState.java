@@ -81,8 +81,8 @@ public class BattleState implements GameState {
 			game.getRenderer().renderVictory(battle.getPlayer(), enemy,
 					epGained, game.getTotalEp(), game.getVictories(), levelResult);
 		} else {
-			// Im Trainerkampf gibt es weder Fangen noch Fliehen.
-			game.getRenderer().renderBattle(battle, !isTrainerBattle(), !isTrainerBattle());
+			// Im Trainerkampf kann man nicht fangen, aber fliehen (Nils ist Level 50).
+			game.getRenderer().renderBattle(battle, !isTrainerBattle(), true);
 		}
 	}
 
@@ -99,12 +99,8 @@ public class BattleState implements GameState {
 
 		switch (key) {
 		case 'f':
-			if (isTrainerBattle()) {
-				battle.getLog().add("Vor " + trainer.getName() + " kann man nicht fliehen!");
-			} else {
-				battle.flee();
-				runRound();
-			}
+			battle.flee();
+			runRound();
 			return;
 		case 'z':
 			if (isTrainerBattle()) {
