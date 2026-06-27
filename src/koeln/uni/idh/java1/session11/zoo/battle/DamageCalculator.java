@@ -33,7 +33,7 @@ public class DamageCalculator {
 	 * Globaler Schadensfaktor, mit dem sich das Tempo der Kämpfe einstellen lässt:
 	 * höher = kürzere Kämpfe. 1.0 entspräche der reinen Pokémon-Formel.
 	 */
-	private static final double DAMAGE_MULTIPLIER = 1.4;
+	private static final double DAMAGE_MULTIPLIER = 2.2;
 
 	public DamageResult calculate(Battler attacker, Battler defender, Move move) {
 		double effectiveness = TypeChart.effectiveness(move.getType(), defender.getType());
