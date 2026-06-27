@@ -345,9 +345,9 @@ public class BattleState implements GameState {
 		switch (battle.getResult()) {
 		case SPIELER_GEWINNT:
 			if (isTrainerBattle()) {
-				// Erzfeind besiegt: Spiel gewonnen → Abspann.
+				// Erzfeind besiegt: Siegesdialog (Welt zerfällt) → Abspann.
 				game.markBossDefeated();
-				game.setState(new EndingState(game));
+				game.setState(game.bossVictoryDialogue());
 			} else {
 				// Besiegtes Tier verschwindet, ein neues wildes Tier erscheint.
 				game.getWorld().removeWildAnimal(enemy);

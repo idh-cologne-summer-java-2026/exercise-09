@@ -259,6 +259,22 @@ public class Game {
 		return new DialogueState(this, pages, this::startBossBattle);
 	}
 
+	/**
+	 * Siegesdialog nach dem Sieg über Prof. Nils: Die ASCII-Welt zerbricht und
+	 * mit ihr die endlosen ASCII-Art-Hausaufgaben. Danach folgt der Abspann.
+	 */
+	public GameState bossVictoryDialogue() {
+		List<Page> pages = Arrays.asList(
+				new Page("Prof. Nils", "Nein … unmöglich! Meine ASCII-Welt … sie zerfällt!"),
+				new Page("Prof. Nils", "Ohne mich gibt es … niemanden mehr … der euch ASCII-Art-"
+						+ "Aufgaben stellt …"),
+				new Page(null, "Mit einem Knistern zerbricht die ASCII-Welt in tausend Zeichen. "
+						+ "Lamas, Drachen und Schleifen-Diagramme lösen sich auf."),
+				new Page(null, "Von heute an gibt es nie wieder ASCII-Art-Hausaufgaben. "
+						+ "Du bist frei – und alle Studierenden mit dir!"));
+		return new DialogueState(this, pages, () -> setState(new EndingState(this)));
+	}
+
 	/** Heilt das Team voll, frischt Prof. Nils' Zookémon auf und startet den Kampf. */
 	private void startBossBattle() {
 		for (WalkingMammal m : team.getMembers()) {
