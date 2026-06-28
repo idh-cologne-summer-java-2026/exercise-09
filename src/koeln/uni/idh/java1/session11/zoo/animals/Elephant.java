@@ -7,4 +7,12 @@ public class Elephant extends WalkingMammal {
     return 'E';
   }
 
+  @Override
+  public String getAsciiArt() {
+    return "   " + getDisplayName() + "\n"
+        + "   /\\  ___\n"
+        + "  ( o )  )\n"
+        + "   \\__/  \n";
+  }
+
 }

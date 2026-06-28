@@ -82,12 +82,55 @@ public abstract class WalkingMammal implements Drawable {
 	 */
 	public abstract char getSymbol();
 
-	public int getX() {
-		return x;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public void setX(int x) {
-		this.x = x;
+	public String getDisplayName() {
+		return name != null ? name : this.getClass().getSimpleName();
+	}
+
+	private static final int MAX_NEED = 100;
+	private static final int MIN_NEED = 0;
+	private static final int NEED_STEP = 25;
+
+	private int hunger = 50;
+	private int thirst = 50;
+	private int tiredness = 50;
+
+	public String getNeedStatus() {
+		return "Hunger: " + hunger + "/100  Durst: " + thirst + "/100  Müdigkeit: " + tiredness + "/100";
+	}
+
+	public void feed() {
+		hunger = clampNeed(hunger + NEED_STEP);
+		System.out.println(getDisplayName() + " wurde gefüttert.");
+	}
+
+	public void drink() {
+		thirst = clampNeed(thirst + NEED_STEP);
+		System.out.println(getDisplayName() + " hat getrunken.");
+	}
+
+	public void rest() {
+		tiredness = clampNeed(tiredness + NEED_STEP);
+		System.out.println(getDisplayName() + " hat sich ausgeruht.");
+	}
+
+	private int clampNeed(int value) {
+		if (value < MIN_NEED)
+			return MIN_NEED;
+		if (value > MAX_NEED)
+			return MAX_NEED;
+		return value;
+	}
+
+	public String getAsciiArt() {
+		return "   " + getDisplayName() + "\n"
+			+ "    " + getSymbol() + "  \n"
+			+ "   /|\\ \n"
+			+ "  / | \\ \n"
+			+ "   / \\ \n";
 	}
 
 	public int getY() {

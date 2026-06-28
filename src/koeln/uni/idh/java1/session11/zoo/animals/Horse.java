@@ -59,7 +59,13 @@ public class Horse extends WalkingMammal {
 	public char getSymbol() {
 		return 'H';
 	}
-	
-	
+
+	@Override
+	public String getAsciiArt() {
+		return "   " + getDisplayName() + "\n"
+			+ "   ,--./)\n"
+			+ "  (  ^_^)~\n"
+			+ "   \"   \"\n";
+	}
 
 }
