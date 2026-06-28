@@ -1,7 +1,5 @@
 package koeln.uni.idh.java1.session11.zoo.ui;
 
-import koeln.uni.idh.java1.session11.zoo.animals.WalkingMammal;
-
 public class AsciiImage {
 
 	/**
@@ -47,7 +45,11 @@ public class AsciiImage {
         }
     }
 
-    
+    public void setPixel(int x, int y, char symbol) {
+        if (isInside(x, y)) {
+            image[y][x] = symbol;
+        }
+    }
 
 	public boolean isInside(int x, int y) {
 	        return y >= 0 && y < image.length

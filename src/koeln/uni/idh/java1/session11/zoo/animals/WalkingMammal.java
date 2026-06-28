@@ -1,101 +1,242 @@
 package koeln.uni.idh.java1.session11.zoo.animals;
 
+import java.util.Random;
+
 import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
+import koeln.uni.idh.java1.session11.zoo.Weather;
 
-/**
- * This class represents walking mammals. Walking mammals have a position (x and
- * y coordinates), a face direction, a step size (i.e., the number of units they
- * go when making a single step) and a name.
- * 
- * Walking mammals can turn and walk, and they know how they should be
- * represented in a zoo visualization.
- * 
- * @author nils.reiter@uni-koeln.de
- *
- */
 public abstract class WalkingMammal implements Drawable {
-	String name;
 
-	/**
-	 * the current x position of the mammal
-	 */
-	int x = 1;
+    private static final Random random = new Random();
 
-	/**
-	 * The current y position of the mammal
-	 */
-	int y = 1;
-	
-	/**
-	 * How far the animal walks in a single step
-	 */
-	int stepsize = 1;
+    protected String name;
 
-	/**
-	 * The current view direction of the horse, on a 360° wheel (compass rose).
-	 * 0 => top, 90 => right, 180 => bottom, 270 => left
-	 */
-	int direction = 0;
+    protected int x;
+    protected int y;
 
-	/**
-	 * The animal walks a single step in the direction in which it is looking.
-	 */
-	public void walk() {
+    protected int dx;
+    protected int dy;
 
-		switch (direction) {
-		case 0:
-			this.y = this.y - stepsize;
-			break;
-		case 180:
-			this.x = this.x - stepsize;
-			break;
-		case 270:
-			this.y = this.y + stepsize;
-			break;
-		case 90:
-			this.x = this.x + stepsize;
-		}
-		System.out.println("Animal has moved.");
-	}
+    protected int hunger;
+    protected int thirst;
+    protected int age;
 
-	/**
-	 * This method calculates the new direction by taking the sign of the argument
-	 * with Math.signum(), multiplying that with 90 and add it to the old direction
-	 * value. To avoid that we produce direction values > 360, we take the modulo of
-	 * 360.
-	 * 
-	 * @param turnDirection If the argument is a negative number, the animal turns
-	 *                      to the left. If it's positive number, it turns to the
-	 *                      right.
-	 */
-	public void turn(int turnDirection) {
-		this.direction = (int) (this.direction + (Math.signum(turnDirection) * 90) % 360);
-		System.out.println("Animal " + name + " has turned and is now looking towards " + direction + ".");
+    protected boolean alive;
 
-	}
+    public WalkingMammal(String name, int x, int y) {
+        this.name = name;
+        this.x = x;
+        this.y = y;
 
-	/**
-	 * How to represent the animal on the zoo field. Note that this is not an
-	 * individual animal, but one that symbolizes the class of the animal.
-	 * 
-	 * @return A character used to represent the animal
-	 */
-	public abstract char getSymbol();
+        this.dx = randomDirection();
+        this.dy = randomDirection();
 
-	public int getX() {
-		return x;
-	}
+        this.hunger = 0;
+        this.thirst = 0;
+        this.age = 0;
+        this.alive = true;
+    }
 
-	public void setX(int x) {
-		this.x = x;
-	}
+    private int randomDirection() {
+        return random.nextInt(3) - 1;
+    }
 
-	public int getY() {
-		return y;
-	}
+    public void walk(int width, int height) {
+        if (!alive) {
+            return;
+        }
 
-	public void setY(int y) {
-		this.y = y;
-	}
+        // Manchmal zufällig die Richtung ändern
+        if (random.nextInt(100) < 30) {
+            turn();
+        }
 
+        int nextX = x + dx;
+        int nextY = y + dy;
+
+        // Wenn das Tier den Rand erreicht, dreht es um
+        if (nextX < 0 || nextX >= width) {
+            dx = -dx;
+            nextX = x + dx;
+        }
+
+        if (nextY < 0 || nextY >= height) {
+            dy = -dy;
+            nextY = y + dy;
+        }
+
+        // Falls dx und dy beide 0 sind, bleibt das Tier stehen.
+        // Das ist okay, wirkt natürlicher.
+        if (nextX >= 0 && nextX < width) {
+            x = nextX;
+        }
+
+        if (nextY >= 0 && nextY < height) {
+            y = nextY;
+        }
+    }
+
+    public void turn() {
+        dx = randomDirection();
+        dy = randomDirection();
+    }
+
+    public void tick(Weather weather) {
+        if (!alive) {
+            return;
+        }
+
+        age++;
+
+        hunger += getHungerIncrease();
+        thirst += getThirstIncrease(weather);
+
+        if (hunger > 100 || thirst > 100) {
+            alive = false;
+        }
+    }
+
+    protected int getHungerIncrease() {
+        return 2;
+    }
+
+    protected int getThirstIncrease(Weather weather) {
+        if (weather == Weather.HEATWAVE) {
+            return 5;
+        }
+
+        if (weather == Weather.RAIN) {
+            return 1;
+        }
+
+        return 3;
+    }
+
+    public void eat() {
+        if (!alive) {
+            return;
+        }
+
+        hunger -= 30;
+
+        if (hunger < 0) {
+            hunger = 0;
+        }
+    }
+
+    public void drink() {
+        if (!alive) {
+            return;
+        }
+
+        thirst -= 30;
+
+        if (thirst < 0) {
+            thirst = 0;
+        }
+    }
+
+    public void pet() {
+        if (!alive) {
+            return;
+        }
+
+        // Streicheln macht das Tier etwas entspannter:
+        // Hunger und Durst sinken minimal.
+        hunger -= 5;
+        thirst -= 5;
+
+        if (hunger < 0) {
+            hunger = 0;
+        }
+
+        if (thirst < 0) {
+            thirst = 0;
+        }
+    }
+
+    public boolean isHungry() {
+        return hunger >= 50;
+    }
+
+    public boolean isThirsty() {
+        return thirst >= 50;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public boolean isAt(int otherX, int otherY) {
+        return x == otherX && y == otherY;
+    }
+
+    public boolean isNear(int otherX, int otherY) {
+        int distanceX = Math.abs(x - otherX);
+        int distanceY = Math.abs(y - otherY);
+
+        return distanceX <= 1 && distanceY <= 1;
+    }
+
+    public void interact(WalkingMammal other) {
+        if (!alive || other == null || !other.isAlive()) {
+            return;
+        }
+
+        if (this == other) {
+            return;
+        }
+
+        if (isAt(other.getX(), other.getY())) {
+            // Begegnung macht Tiere ein kleines bisschen aktiver.
+            turn();
+        }
+    }
+
+    public String getStatus() {
+        String status = name
+                + " (" + getClass().getSimpleName() + ")"
+                + " | Position: (" + x + ", " + y + ")"
+                + " | Hunger: " + hunger
+                + " | Durst: " + thirst
+                + " | Alter: " + age;
+
+        if (!alive) {
+            status += " | Status: nicht mehr aktiv";
+        } else if (isHungry() && isThirsty()) {
+            status += " | Status: hungrig und durstig";
+        } else if (isHungry()) {
+            status += " | Status: hungrig";
+        } else if (isThirsty()) {
+            status += " | Status: durstig";
+        } else {
+            status += " | Status: zufrieden";
+        }
+
+        return status;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getHunger() {
+        return hunger;
+    }
+
+    public int getThirst() {
+        return thirst;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 }
