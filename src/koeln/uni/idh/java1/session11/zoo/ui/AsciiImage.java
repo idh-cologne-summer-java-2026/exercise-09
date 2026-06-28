@@ -7,34 +7,28 @@ public class AsciiImage {
 	/**
 	 * The image itself, as ASCII-art
 	 */
-	private char[][] image;
-
-	/**
-	 * Representation of a white pixel
-	 */
-	private char white = '.';
-
-	/**
-	 * Representation of a black pixel
-	 */
-	private char black = '#';
-
+	private final char [][] image;
+	 
+	 private final char background = '.';
+	
+	 
 	/**
 	 * Creates a new empty image with the given width, which is expressed as the
 	 * number of columns in each line.
 	 * 
 	 * @param width An integer value that represents the width of the image
 	 */
-	public AsciiImage(int width, int height) {
 
-		// Initially, the image is empty
-		this.image = new char[height][width];
-		for (int h = 0; h < image.length; h++) {
-			for (int w = 0; w < image[0].length; w++) {
-				image[h][w] = white;
-			}
-		}
-	}
+	public AsciiImage(int width, int height) {
+	        this.image = new char[height][width];
+	
+	        for (int y = 0; y < image.length; y++) {
+	            for (int x = 0; x < image[y].length; x++) {
+	                image[y][x] = background;
+	            }
+	        }
+	    }
+
 
 	/**
 	 * Paint a single black dot at position x and y
@@ -42,29 +36,45 @@ public class AsciiImage {
 	 * @param x The horizontal position of the pixel
 	 * @param y The vertical position of the pixel
 	 */
-	public void dot(int x, int y) {
-		image[y][x] = black;
-	}
 
-	public void dot(int x, int y, WalkingMammal wm) {
-		image[y][x] = wm.getSymbol();
-	}
+    public void dot(int x, int y) {
+        setPixel(x, y, '#');
+    }
+
+    public void dot(int x, int y, Drawable drawable) {
+        if (drawable != null) {
+            setPixel(x, y, drawable.getSymbol());
+        }
+    }
+
+    
+
+	public boolean isInside(int x, int y) {
+	        return y >= 0 && y < image.length
+	                && x >= 0 && x < image[0].length;
+	    }
 
 
 
 	/**
 	 * Generate the image as a String. Used for printing it to the user.
 	 */
-	public String toString() {
-		String r = "";
-		for (int h = 0; h < image.length; h++) {
-			for (int w = 0; w < image[h].length; w++) {
-				r += image[h][w];
-			}
-			r += "\n";
-		}
-		return r;
-	}
+
+	@Override
+	    public String toString() {
+	        String result = "";
+	
+	        for (int y = 0; y < image.length; y++) {
+	            for (int x = 0; x < image[y].length; x++) {
+	                result += image[y][x] + " ";
+	            }
+	            result += "\n";
+	        }
+	
+	        return result;
+	    }
+	
+
 
 	/**
 	 * Returns the width of the image (i.e., the length of the first row)
