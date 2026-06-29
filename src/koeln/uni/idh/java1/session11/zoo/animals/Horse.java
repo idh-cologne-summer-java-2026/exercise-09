@@ -45,7 +45,9 @@ public class Horse extends WalkingMammal {
 		return ret;
 	}
 
-	
+	public Horse() {
+	    this("Unknown", "brown");
+	}
 
 	private String mixFurColors(String fur1, String fur2) {
 		if (fur1.equals("black") || fur2.equals("black"))

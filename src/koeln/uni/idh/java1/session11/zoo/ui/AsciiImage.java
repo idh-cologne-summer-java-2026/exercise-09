@@ -80,4 +80,8 @@ public class AsciiImage {
 	public int height() {
 		return image.length;
 	}
+	
+	public void dot(int x, int y, char c) {
+	    image[y][x] = c;
+	}
 }
