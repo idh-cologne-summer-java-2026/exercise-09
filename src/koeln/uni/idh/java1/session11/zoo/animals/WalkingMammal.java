@@ -14,7 +14,12 @@ import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
  *
  */
 public abstract class WalkingMammal implements Drawable {
+
 	String name;
+
+	// Neue Attribute
+	private int hunger = 0;
+	private int thirst = 0;
 
 	/**
 	 * the current x position of the mammal
@@ -25,7 +30,7 @@ public abstract class WalkingMammal implements Drawable {
 	 * The current y position of the mammal
 	 */
 	int y = 1;
-	
+
 	/**
 	 * How far the animal walks in a single step
 	 */
@@ -54,31 +59,26 @@ public abstract class WalkingMammal implements Drawable {
 			break;
 		case 90:
 			this.x = this.x + stepsize;
+			break;
 		}
+
+		// Hunger und Durst steigen bei jeder Bewegung
+		hunger++;
+		thirst++;
+
 		System.out.println("Animal has moved.");
 	}
 
 	/**
-	 * This method calculates the new direction by taking the sign of the argument
-	 * with Math.signum(), multiplying that with 90 and add it to the old direction
-	 * value. To avoid that we produce direction values > 360, we take the modulo of
-	 * 360.
-	 * 
-	 * @param turnDirection If the argument is a negative number, the animal turns
-	 *                      to the left. If it's positive number, it turns to the
-	 *                      right.
+	 * Turns the animal.
 	 */
 	public void turn(int turnDirection) {
 		this.direction = (int) (this.direction + (Math.signum(turnDirection) * 90) % 360);
 		System.out.println("Animal " + name + " has turned and is now looking towards " + direction + ".");
-
 	}
 
 	/**
-	 * How to represent the animal on the zoo field. Note that this is not an
-	 * individual animal, but one that symbolizes the class of the animal.
-	 * 
-	 * @return A character used to represent the animal
+	 * Symbol of the animal.
 	 */
 	public abstract char getSymbol();
 
@@ -98,4 +98,23 @@ public abstract class WalkingMammal implements Drawable {
 		this.y = y;
 	}
 
+	// Neue Methoden
+
+	public void feed() {
+		hunger = 0;
+		System.out.println("The animal has been fed.");
+	}
+
+	public void drink() {
+		thirst = 0;
+		System.out.println("The animal has drunk water.");
+	}
+
+	public int getHunger() {
+		return hunger;
+	}
+
+	public int getThirst() {
+		return thirst;
+	}
 }
