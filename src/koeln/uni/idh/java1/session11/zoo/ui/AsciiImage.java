@@ -1,34 +1,16 @@
 package koeln.uni.idh.java1.session11.zoo.ui;
 
-import koeln.uni.idh.java1.session11.zoo.animals.WalkingMammal;
-
 public class AsciiImage {
-
-	/**
-	 * The image itself, as ASCII-art
-	 */
 	private char[][] image;
-
-	/**
-	 * Representation of a white pixel
-	 */
 	private char white = '.';
-
-	/**
-	 * Representation of a black pixel
-	 */
 	private char black = '#';
 
-	/**
-	 * Creates a new empty image with the given width, which is expressed as the
-	 * number of columns in each line.
-	 * 
-	 * @param width An integer value that represents the width of the image
-	 */
 	public AsciiImage(int width, int height) {
-
-		// Initially, the image is empty
 		this.image = new char[height][width];
+		clear();
+	}
+
+	public void clear() {
 		for (int h = 0; h < image.length; h++) {
 			for (int w = 0; w < image[0].length; w++) {
 				image[h][w] = white;
@@ -36,47 +18,50 @@ public class AsciiImage {
 		}
 	}
 
-	/**
-	 * Paint a single black dot at position x and y
-	 * 
-	 * @param x The horizontal position of the pixel
-	 * @param y The vertical position of the pixel
-	 */
 	public void dot(int x, int y) {
-		image[y][x] = black;
+		dot(x, y, black);
 	}
 
-	public void dot(int x, int y, WalkingMammal wm) {
-		image[y][x] = wm.getSymbol();
+	public void dot(int x, int y, Drawable drawable) {
+		dot(x, y, drawable.getSymbol());
 	}
 
+	public void dot(int x, int y, char symbol) {
+		if (isInside(x, y)) {
+			image[y][x] = symbol;
+		}
+	}
 
+	public void rectangle(int x, int y, int width, int height, char border) {
+		for (int currentX = x; currentX < x + width; currentX++) {
+			dot(currentX, y, border);
+			dot(currentX, y + height - 1, border);
+		}
+		for (int currentY = y; currentY < y + height; currentY++) {
+			dot(x, currentY, border);
+			dot(x + width - 1, currentY, border);
+		}
+	}
 
-	/**
-	 * Generate the image as a String. Used for printing it to the user.
-	 */
+	private boolean isInside(int x, int y) {
+		return y >= 0 && y < image.length && x >= 0 && x < image[0].length;
+	}
+
 	public String toString() {
-		String r = "";
+		StringBuilder builder = new StringBuilder();
 		for (int h = 0; h < image.length; h++) {
 			for (int w = 0; w < image[h].length; w++) {
-				r += image[h][w];
+				builder.append(image[h][w]);
 			}
-			r += "\n";
+			builder.append('\n');
 		}
-		return r;
+		return builder.toString();
 	}
 
-	/**
-	 * Returns the width of the image (i.e., the length of the first row)
-	 * @return
-	 */
 	public int width() {
 		return image[0].length;
 	}
-	
-	/** 
-	 * Returns the height of the image (i.e., number of rows)
-	 */
+
 	public int height() {
 		return image.length;
 	}

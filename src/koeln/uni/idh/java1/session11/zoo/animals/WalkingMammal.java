@@ -3,45 +3,31 @@ package koeln.uni.idh.java1.session11.zoo.animals;
 import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
 
 /**
- * This class represents walking mammals. Walking mammals have a position (x and
- * y coordinates), a face direction, a step size (i.e., the number of units they
- * go when making a single step) and a name.
- * 
- * Walking mammals can turn and walk, and they know how they should be
- * represented in a zoo visualization.
- * 
- * @author nils.reiter@uni-koeln.de
+ * Base class for all walking mammals in the zoo simulation.
  *
+ * The class now models a few state values that are useful for a small
+ * simulation: position, direction, hunger, thirst and friendliness.
  */
 public abstract class WalkingMammal implements Drawable {
-	String name;
+	private String name;
+	private int x = 1;
+	private int y = 1;
+	private int stepsize = 1;
 
 	/**
-	 * the current x position of the mammal
+	 * 0 => top, 90 => right, 180 => left, 270 => bottom
 	 */
-	int x = 1;
+	private int direction = 0;
 
-	/**
-	 * The current y position of the mammal
-	 */
-	int y = 1;
-	
-	/**
-	 * How far the animal walks in a single step
-	 */
-	int stepsize = 1;
+	private int hunger = 30;
+	private int thirst = 30;
+	private int friendliness = 50;
 
-	/**
-	 * The current view direction of the horse, on a 360° wheel (compass rose).
-	 * 0 => top, 90 => right, 180 => bottom, 270 => left
-	 */
-	int direction = 0;
+	protected WalkingMammal(String name) {
+		this.name = name;
+	}
 
-	/**
-	 * The animal walks a single step in the direction in which it is looking.
-	 */
 	public void walk() {
-
 		switch (direction) {
 		case 0:
 			this.y = this.y - stepsize;
@@ -54,33 +40,71 @@ public abstract class WalkingMammal implements Drawable {
 			break;
 		case 90:
 			this.x = this.x + stepsize;
+			break;
+		default:
+			break;
 		}
-		System.out.println("Animal has moved.");
+		hunger = limit(hunger + 6);
+		thirst = limit(thirst + 8);
 	}
 
-	/**
-	 * This method calculates the new direction by taking the sign of the argument
-	 * with Math.signum(), multiplying that with 90 and add it to the old direction
-	 * value. To avoid that we produce direction values > 360, we take the modulo of
-	 * 360.
-	 * 
-	 * @param turnDirection If the argument is a negative number, the animal turns
-	 *                      to the left. If it's positive number, it turns to the
-	 *                      right.
-	 */
 	public void turn(int turnDirection) {
-		this.direction = (int) (this.direction + (Math.signum(turnDirection) * 90) % 360);
-		System.out.println("Animal " + name + " has turned and is now looking towards " + direction + ".");
-
+		this.direction = Math.floorMod((int) (this.direction + Math.signum(turnDirection) * 90), 360);
 	}
 
-	/**
-	 * How to represent the animal on the zoo field. Note that this is not an
-	 * individual animal, but one that symbolizes the class of the animal.
-	 * 
-	 * @return A character used to represent the animal
-	 */
+	public void feed() {
+		hunger = limit(hunger - 35);
+		friendliness = limit(friendliness + 5);
+	}
+
+	public void giveWater() {
+		thirst = limit(thirst - 40);
+		friendliness = limit(friendliness + 2);
+	}
+
+	public void pet() {
+		if (hunger > 75 || thirst > 75) {
+			friendliness = limit(friendliness - 10);
+		} else {
+			friendliness = limit(friendliness + 12);
+		}
+	}
+
+	public void heatWave() {
+		thirst = limit(thirst + 25);
+		hunger = limit(hunger + 5);
+	}
+
+	public boolean isHungry() {
+		return hunger >= 60;
+	}
+
+	public boolean isThirsty() {
+		return thirst >= 60;
+	}
+
+	public boolean isHappy() {
+		return hunger < 60 && thirst < 60 && friendliness >= 50;
+	}
+
+	public String status() {
+		return getName() + " (" + getSymbol() + ") hunger=" + hunger + ", thirst=" + thirst
+				+ ", friendliness=" + friendliness + ", position=(" + x + "," + y + ")";
+	}
+
+	private int limit(int value) {
+		return Math.max(0, Math.min(100, value));
+	}
+
 	public abstract char getSymbol();
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public int getX() {
 		return x;
@@ -98,4 +122,11 @@ public abstract class WalkingMammal implements Drawable {
 		this.y = y;
 	}
 
+	public int getStepsize() {
+		return stepsize;
+	}
+
+	public void setStepsize(int stepsize) {
+		this.stepsize = Math.max(1, stepsize);
+	}
 }
