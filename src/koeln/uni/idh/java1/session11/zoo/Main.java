@@ -18,6 +18,9 @@ public class Main {
 		WalkingMammal alpaca = new Alpaca();
 		Tiger tiger = new Tiger("Joris", 11);
 		
+		// Create a bathing lake for the animals
+		BathingLake lake = new BathingLake("Crystal Lake");
+		
 		// Create visitors for the zoo
 		Visitor visitor1 = new Visitor("Anna", 25);
 		Visitor visitor2 = new Visitor("Bob", 8);
@@ -25,6 +28,9 @@ public class Main {
 		// Place animals in the animal area
 		zoo.placeAnimal(5, 7, alpaca);
 		zoo.placeAnimal(3, 8, tiger);
+		
+		// Place the bathing lake in the animal area
+		zoo.placeInAnimalArea(7, 3, lake);
 		
 		// Place visitors in the visitor area
 		zoo.placeVisitor(1, 2, visitor1);
@@ -34,6 +40,11 @@ public class Main {
 		tiger.roar();
 		visitor1.viewAnimal("Tiger");
 		visitor2.viewAnimal("Alpaca");
+		
+		// Animals bathe in the lake
+		System.out.println("\n--- Animals cool off at the lake ---");
+		lake.letAnimalBathe("Alpaca");
+		lake.letAnimalBathe("Tiger");
 		
 		// Tiger jumps into the visitor area
 		System.out.println("\n--- Tiger attacks! ---");
