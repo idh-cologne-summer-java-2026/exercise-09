@@ -69,7 +69,13 @@ public abstract class WalkingMammal implements Drawable {
 	 *                      right.
 	 */
 	public void turn(int turnDirection) {
-		this.direction = (int) (this.direction + (Math.signum(turnDirection) * 90) % 360);
+		// Bugfix: Zuerst die ganze Summe bilden, DANN modulo 360 rechnen.
+		// Vorher band das "% 360" nur an (signum*90), nie an die Summe -
+		// dadurch konnte direction unbegrenzt wachsen (z.B. 450, 540, ...).
+		// Das zusaetzliche "+ 360) % 360" haelt das Ergebnis auch nach
+		// Linksdrehungen (negative Werte) im Bereich 0..359.
+		double turned = this.direction + Math.signum(turnDirection) * 90;
+		this.direction = (int) (((turned % 360) + 360) % 360);
 		System.out.println("Animal " + name + " has turned and is now looking towards " + direction + ".");
 
 	}
@@ -81,6 +87,14 @@ public abstract class WalkingMammal implements Drawable {
 	 * @return A character used to represent the animal
 	 */
 	public abstract char getSymbol();
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public int getX() {
 		return x;
@@ -96,6 +110,23 @@ public abstract class WalkingMammal implements Drawable {
 
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	/**
+	 * Keeps the animal inside a rectangular field of the given size. If a step
+	 * would carry it past an edge, it is "pushed back" onto the last valid cell.
+	 * This protects the AsciiImage from being indexed with coordinates that lie
+	 * outside its char[][] array (which would throw an
+	 * ArrayIndexOutOfBoundsException).
+	 *
+	 * @param width  number of columns (valid x: 0 .. width-1)
+	 * @param height number of rows    (valid y: 0 .. height-1)
+	 */
+	public void keepInside(int width, int height) {
+		if (x < 0) x = 0;
+		if (y < 0) y = 0;
+		if (x > width - 1) x = width - 1;
+		if (y > height - 1) y = height - 1;
 	}
 
 }

@@ -1,7 +1,5 @@
 package koeln.uni.idh.java1.session11.zoo.ui;
 
-import koeln.uni.idh.java1.session11.zoo.animals.WalkingMammal;
-
 public class AsciiImage {
 
 	/**
@@ -46,8 +44,17 @@ public class AsciiImage {
 		image[y][x] = black;
 	}
 
-	public void dot(int x, int y, WalkingMammal wm) {
-		image[y][x] = wm.getSymbol();
+	/**
+	 * Paint anything that is {@link Drawable} at position x and y. By depending
+	 * only on the interface (and not on a concrete class like WalkingMammal), we
+	 * can draw animals AND trees AND anything we invent later with this one method.
+	 *
+	 * @param x The horizontal position
+	 * @param y The vertical position
+	 * @param d The object to draw; its getSymbol() decides the character
+	 */
+	public void dot(int x, int y, Drawable d) {
+		image[y][x] = d.getSymbol();
 	}
 
 
