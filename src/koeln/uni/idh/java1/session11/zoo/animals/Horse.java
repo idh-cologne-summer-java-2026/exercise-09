@@ -60,6 +60,8 @@ public class Horse extends WalkingMammal {
 		return 'H';
 	}
 	
-	
+	public void eat(String food) {
+		System.out.println("Das Pferd " + this.name + " frisst " + food + ".");
+	}
 
 }

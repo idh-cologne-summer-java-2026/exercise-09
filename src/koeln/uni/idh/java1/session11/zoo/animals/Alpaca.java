@@ -13,4 +13,8 @@ public class Alpaca extends WalkingMammal {
 	public void spit() {
 		System.out.println("Ein Alpaka spuckt.");
 	}
+	
+	public void eat(String food) {
+		System.out.println("Das Alpaka frisst " + food + ".");
+	}
 }

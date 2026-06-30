@@ -6,5 +6,9 @@ public class Elephant extends WalkingMammal {
   public char getSymbol() {
     return 'E';
   }
+  
+  public void eat(String food) {
+	  System.out.println("Der Elefant frisst " + food + ".");
+  }
 
 }

@@ -47,10 +47,10 @@ public abstract class WalkingMammal implements Drawable {
 			this.y = this.y - stepsize;
 			break;
 		case 180:
-			this.x = this.x - stepsize;
+			this.y = this.y + stepsize;
 			break;
 		case 270:
-			this.y = this.y + stepsize;
+			this.x = this.x - stepsize;
 			break;
 		case 90:
 			this.x = this.x + stepsize;
