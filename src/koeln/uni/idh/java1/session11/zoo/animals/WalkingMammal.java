@@ -14,7 +14,7 @@ import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
  *
  */
 public abstract class WalkingMammal implements Drawable {
-	String name;
+	protected String name;
 
 	/**
 	 * the current x position of the mammal
@@ -36,6 +36,18 @@ public abstract class WalkingMammal implements Drawable {
 	 * 0 => top, 90 => right, 180 => bottom, 270 => left
 	 */
 	int direction = 0;
+
+	private int hunger = 4;
+	private int thirst = 4;
+	private boolean happy = false;
+
+	protected WalkingMammal() {
+		this("Tier");
+	}
+
+	protected WalkingMammal(String name) {
+		this.name = name;
+	}
 
 	/**
 	 * The animal walks a single step in the direction in which it is looking.
@@ -81,6 +93,41 @@ public abstract class WalkingMammal implements Drawable {
 	 * @return A character used to represent the animal
 	 */
 	public abstract char getSymbol();
+
+	public void feed() {
+		hunger = Math.max(0, hunger - 3);
+		thirst = Math.min(10, thirst + 1);
+		happy = true;
+		System.out.println(name + " hat etwas zu essen bekommen.");
+	}
+
+	public void giveWater() {
+		thirst = Math.max(0, thirst - 3);
+		hunger = Math.min(10, hunger + 1);
+		happy = true;
+		System.out.println(name + " hat etwas zu trinken bekommen.");
+	}
+
+	public void pet() {
+		happy = true;
+		System.out.println(name + " freut sich ueber die Streicheleinheiten.");
+	}
+
+	public void tick() {
+		hunger = Math.min(10, hunger + 1);
+		thirst = Math.min(10, thirst + 1);
+		if (hunger > 7 || thirst > 7) {
+			happy = false;
+		}
+	}
+
+	public String getStatus() {
+		return name + " | Hunger: " + hunger + "/10 | Durst: " + thirst + "/10";
+	}
+
+	public String getName() {
+		return name;
+	}
 
 	public int getX() {
 		return x;

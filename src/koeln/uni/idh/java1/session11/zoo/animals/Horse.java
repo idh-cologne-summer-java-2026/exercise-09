@@ -9,11 +9,6 @@ public class Horse extends WalkingMammal {
 	int stepsize = 1;
 
 	/**
-	 * The name of the horse
-	 */
-	String name;
-
-	/**
 	 * The color of the horse's fur
 	 */
 	String color;
@@ -26,8 +21,8 @@ public class Horse extends WalkingMammal {
 	 * @param color
 	 */
 	public Horse(String name, String color) {
+		super(name);
 		numberOfHorses++;
-		this.name = name;
 		this.color = color;
 		System.out.println("Horse " + name + " has been born and has " + color + " fur. There are now " + numberOfHorses + " horses in the world.");
 	}
