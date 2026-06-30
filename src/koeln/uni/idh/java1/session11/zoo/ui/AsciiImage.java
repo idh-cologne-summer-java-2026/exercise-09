@@ -50,6 +50,10 @@ public class AsciiImage {
 		image[y][x] = wm.getSymbol();
 	}
 
+	public void dot(int x, int y, Drawable drawable) {
+		image[y][x] = drawable.getSymbol();
+	}
+
 
 
 	/**
