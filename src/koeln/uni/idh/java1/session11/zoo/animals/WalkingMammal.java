@@ -1,46 +1,44 @@
 package koeln.uni.idh.java1.session11.zoo.animals;
 
+import koeln.uni.idh.java1.session11.zoo.DayNightAware;
 import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
 
-/**
- * This class represents walking mammals. Walking mammals have a position (x and
- * y coordinates), a face direction, a step size (i.e., the number of units they
- * go when making a single step) and a name.
- * 
- * Walking mammals can turn and walk, and they know how they should be
- * represented in a zoo visualization.
- * 
- * @author nils.reiter@uni-koeln.de
- *
- */
-public abstract class WalkingMammal implements Drawable {
+public abstract class WalkingMammal implements Drawable, DayNightAware {
+
 	String name;
-
-	/**
-	 * the current x position of the mammal
-	 */
 	int x = 1;
-
-	/**
-	 * The current y position of the mammal
-	 */
 	int y = 1;
-	
-	/**
-	 * How far the animal walks in a single step
-	 */
 	int stepsize = 1;
-
-	/**
-	 * The current view direction of the horse, on a 360° wheel (compass rose).
-	 * 0 => top, 90 => right, 180 => bottom, 270 => left
-	 */
 	int direction = 0;
 
+	/** Ob das Tier gerade schläft */
+	protected boolean asleep = false;
+
 	/**
-	 * The animal walks a single step in the direction in which it is looking.
+	 * Wird von der Clock aufgerufen, wenn sich die Uhrzeit ändert.
+	 * Tiere schlafen standardmäßig nachts (22-5 Uhr) und sind tagsüber wach.
 	 */
+	@Override
+	public void onTimeChange(int hour) {
+		boolean isNight = hour >= 22 || hour < 6;
+		if (isNight && !asleep) {
+			asleep = true;
+			System.out.println(getClass().getSimpleName() + " legt sich schlafen.");
+		} else if (!isNight && asleep) {
+			asleep = false;
+			System.out.println(getClass().getSimpleName() + " wacht auf.");
+		}
+	}
+
+	public boolean isAsleep() {
+		return asleep;
+	}
+
 	public void walk() {
+		if (asleep) {
+			System.out.println("Tier schläft und bewegt sich nicht.");
+			return;
+		}
 
 		switch (direction) {
 		case 0:
@@ -58,44 +56,26 @@ public abstract class WalkingMammal implements Drawable {
 		System.out.println("Animal has moved.");
 	}
 
-	/**
-	 * This method calculates the new direction by taking the sign of the argument
-	 * with Math.signum(), multiplying that with 90 and add it to the old direction
-	 * value. To avoid that we produce direction values > 360, we take the modulo of
-	 * 360.
-	 * 
-	 * @param turnDirection If the argument is a negative number, the animal turns
-	 *                      to the left. If it's positive number, it turns to the
-	 *                      right.
-	 */
 	public void turn(int turnDirection) {
+		if (asleep) {
+			System.out.println("Tier schläft und dreht sich nicht.");
+			return;
+		}
 		this.direction = (int) (this.direction + (Math.signum(turnDirection) * 90) % 360);
 		System.out.println("Animal " + name + " has turned and is now looking towards " + direction + ".");
-
 	}
 
-	/**
-	 * How to represent the animal on the zoo field. Note that this is not an
-	 * individual animal, but one that symbolizes the class of the animal.
-	 * 
-	 * @return A character used to represent the animal
-	 */
 	public abstract char getSymbol();
 
-	public int getX() {
-		return x;
+	/**
+	 * Symbol abhängig vom Schlafzustand: schlafend = Kleinbuchstabe.
+	 */
+	public char getDisplaySymbol() {
+		return asleep ? Character.toLowerCase(getSymbol()) : getSymbol();
 	}
 
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
-
+	public int getX() { return x; }
+	public void setX(int x) { this.x = x; }
+	public int getY() { return y; }
+	public void setY(int y) { this.y = y; }
 }

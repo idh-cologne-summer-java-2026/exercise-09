@@ -47,8 +47,9 @@ public class AsciiImage {
 	}
 
 	public void dot(int x, int y, WalkingMammal wm) {
-		image[y][x] = wm.getSymbol();
+		image[y][x] = wm.getDisplaySymbol();
 	}
+	
 
 
 
@@ -79,5 +80,7 @@ public class AsciiImage {
 	 */
 	public int height() {
 		return image.length;
+		
+	
 	}
 }
