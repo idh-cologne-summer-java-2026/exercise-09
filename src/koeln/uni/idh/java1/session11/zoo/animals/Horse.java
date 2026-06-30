@@ -29,7 +29,17 @@ public class Horse extends WalkingMammal {
 		numberOfHorses++;
 		this.name = name;
 		this.color = color;
+		setupFeedingSchedule();
 		System.out.println("Horse " + name + " has been born and has " + color + " fur. There are now " + numberOfHorses + " horses in the world.");
+	}
+	
+	/**
+	 * Sets up the default feeding schedule for horses
+	 */
+	private void setupFeedingSchedule() {
+		addFeedingSchedule(new FeedingSchedule(7, 0, Food.GRAIN, "breakfast"));
+		addFeedingSchedule(new FeedingSchedule(12, 0, Food.HAY, "lunch"));
+		addFeedingSchedule(new FeedingSchedule(18, 0, Food.GRASS, "dinner"));
 	}
 
 	/**
@@ -43,6 +53,20 @@ public class Horse extends WalkingMammal {
 				mixFurColors(this.color, partner.color));
 		System.out.println("Horse " + ret.name + " has been born.");
 		return ret;
+	}
+	
+	/**
+	 * Gets the preferred food type for horses
+	 */
+	public Food getPreferredFood() {
+		return Food.GRASS;
+	}
+	
+	/**
+	 * Horses prefer hay over other foods for optimal nutrition
+	 */
+	public Food[] getPreferredFoods() {
+		return new Food[]{Food.GRAIN, Food.HAY, Food.GRASS, Food.VEGETABLES};
 	}
 
 	
