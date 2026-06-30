@@ -1,5 +1,7 @@
 package koeln.uni.idh.java1.session11.zoo.animals;
 
+import koeln.uni.idh.java1.session11.zoo.Season;
+import koeln.uni.idh.java1.session11.zoo.areas.Habitat;
 import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
 
 /**
@@ -36,6 +38,10 @@ public abstract class WalkingMammal implements Drawable {
 	 * 0 => top, 90 => right, 180 => bottom, 270 => left
 	 */
 	int direction = 0;
+
+	private Habitat habitat;
+	private int hunger = 50;
+	private int thirst = 50;
 
 	/**
 	 * The animal walks a single step in the direction in which it is looking.
@@ -96,6 +102,74 @@ public abstract class WalkingMammal implements Drawable {
 
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	public Habitat getHabitat() {
+		return habitat;
+	}
+
+	public void setHabitat(Habitat habitat) {
+		this.habitat = habitat;
+	}
+
+	public int getHunger() {
+		return hunger;
+	}
+
+	public void setHunger(int hunger) {
+		this.hunger = Math.max(0, Math.min(100, hunger));
+	}
+
+	public int getThirst() {
+		return thirst;
+	}
+
+	public void setThirst(int thirst) {
+		this.thirst = Math.max(0, Math.min(100, thirst));
+	}
+
+	public void eat() {
+		setHunger(getHunger() - 20);
+		setThirst(getThirst() - 5);
+		String displayName = (name != null && !name.isEmpty()) ? name : getClass().getSimpleName();
+		System.out.println(displayName + " has eaten and feels better.");
+	}
+
+	public void drink() {
+		setThirst(getThirst() - 20);
+		String displayName = (name != null && !name.isEmpty()) ? name : getClass().getSimpleName();
+		System.out.println(displayName + " has drunk water.");
+	}
+
+	public boolean canReproduceInSeason(Season season) {
+		return season == Season.SPRING;
+	}
+
+	public WalkingMammal reproduce(Season season) {
+		if (!canReproduceInSeason(season)) {
+			System.out.println(getDisplayName() + " does not reproduce in " + season + ".");
+			return null;
+		}
+
+		WalkingMammal offspring = createOffspring();
+		System.out.println(getDisplayName() + " reproduced in " + season + " and welcomed a baby " + offspring.getClass().getSimpleName() + ".");
+		return offspring;
+	}
+
+	protected WalkingMammal createOffspring() {
+		try {
+			return getClass().getDeclaredConstructor(String.class).newInstance("Baby " + getDisplayName());
+		} catch (Exception e) {
+			try {
+				return getClass().getDeclaredConstructor().newInstance();
+			} catch (Exception ignored) {
+				return this;
+			}
+		}
+	}
+
+	public String getDisplayName() {
+		return (name != null && !name.isEmpty()) ? name : getClass().getSimpleName();
 	}
 
 }
