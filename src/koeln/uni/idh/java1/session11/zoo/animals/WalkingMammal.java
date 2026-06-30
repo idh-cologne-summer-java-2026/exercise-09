@@ -74,6 +74,10 @@ public abstract class WalkingMammal implements Drawable {
 
 	}
 
+	public void drinkWater() {
+		System.out.println("Animal is drinking water.");
+	}
+
 	/**
 	 * How to represent the animal on the zoo field. Note that this is not an
 	 * individual animal, but one that symbolizes the class of the animal.
