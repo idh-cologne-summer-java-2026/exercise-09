@@ -1,7 +1,5 @@
 package koeln.uni.idh.java1.session11.zoo.ui;
 
-import koeln.uni.idh.java1.session11.zoo.animals.WalkingMammal;
-
 public class AsciiImage {
 
 	/**
@@ -46,8 +44,10 @@ public class AsciiImage {
 		image[y][x] = black;
 	}
 
-	public void dot(int x, int y, WalkingMammal wm) {
-		image[y][x] = wm.getSymbol();
+	public void dot(int x, int y, Drawable drawable) {
+		if (x >= 0 && x < width() && y >= 0 && y < height()) {
+			image[y][x] = drawable.getSymbol();
+		}
 	}
 
 

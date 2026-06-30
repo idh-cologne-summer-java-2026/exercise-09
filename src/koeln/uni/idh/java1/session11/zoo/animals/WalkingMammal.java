@@ -1,5 +1,8 @@
 package koeln.uni.idh.java1.session11.zoo.animals;
 
+import java.util.Random;
+
+import koeln.uni.idh.java1.session11.zoo.Weather;
 import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
 
 /**
@@ -14,28 +17,33 @@ import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
  *
  */
 public abstract class WalkingMammal implements Drawable {
-	String name;
+	protected String name;
+	private int hunger = 25;
+	private int thirst = 25;
+	private int energy = 80;
+	private int stress = 10;
+	private int health = 100;
 
 	/**
 	 * the current x position of the mammal
 	 */
-	int x = 1;
+	protected int x = 1;
 
 	/**
 	 * The current y position of the mammal
 	 */
-	int y = 1;
+	protected int y = 1;
 	
 	/**
 	 * How far the animal walks in a single step
 	 */
-	int stepsize = 1;
+	protected int stepsize = 1;
 
 	/**
 	 * The current view direction of the horse, on a 360° wheel (compass rose).
 	 * 0 => top, 90 => right, 180 => bottom, 270 => left
 	 */
-	int direction = 0;
+	protected int direction = 0;
 
 	/**
 	 * The animal walks a single step in the direction in which it is looking.
@@ -56,6 +64,103 @@ public abstract class WalkingMammal implements Drawable {
 			this.x = this.x + stepsize;
 		}
 		System.out.println("Animal has moved.");
+	}
+
+	public void liveOneHour(Weather weather, Random random, int width, int height) {
+		hunger = limit(hunger + 8 + weather.getHungerEffect());
+		thirst = limit(thirst + 9 + weather.getThirstEffect());
+		stress = limit(stress + weather.getStressEffect());
+		energy = limit(energy - 4);
+
+		if (hunger > 75 || thirst > 75 || stress > 70) {
+			health = limit(health - 3);
+		}
+		if (hunger < 45 && thirst < 45 && stress < 45) {
+			health = limit(health + 2);
+		}
+
+		decideNextAction(weather, random);
+		moveInside(width, height);
+	}
+
+	private void decideNextAction(Weather weather, Random random) {
+		if (weather == Weather.HEATWAVE && thirst > 55) {
+			direction = 90;
+		} else if (energy < 30) {
+			energy = limit(energy + 12);
+			stress = limit(stress - 4);
+		} else {
+			direction = random.nextInt(4) * 90;
+			walkQuietly();
+		}
+	}
+
+	private void walkQuietly() {
+		switch (direction) {
+		case 0:
+			y = y - stepsize;
+			break;
+		case 90:
+			x = x + stepsize;
+			break;
+		case 180:
+			y = y + stepsize;
+			break;
+		case 270:
+			x = x - stepsize;
+			break;
+		default:
+			break;
+		}
+	}
+
+	public void feed() {
+		hunger = limit(hunger - 35);
+		energy = limit(energy + 8);
+	}
+
+	public void drink() {
+		thirst = limit(thirst - 40);
+		health = limit(health + 2);
+	}
+
+	public void pet() {
+		stress = limit(stress - 18);
+		energy = limit(energy - 3);
+	}
+
+	public boolean needsVet() {
+		return health < 55;
+	}
+
+	public void treatByVet() {
+		health = limit(health + 30);
+		stress = limit(stress + 8);
+	}
+
+	public int welfareScore() {
+		return (health + energy + (100 - hunger) + (100 - thirst) + (100 - stress)) / 5;
+	}
+
+	public String statusLine() {
+		return getDisplayName() + " [" + getSymbol() + "] Hunger:" + hunger + " Durst:" + thirst + " Energie:"
+				+ energy + " Stress:" + stress + " Gesundheit:" + health;
+	}
+
+	public String getDisplayName() {
+		if (name == null || name.isBlank()) {
+			return getClass().getSimpleName();
+		}
+		return name;
+	}
+
+	private void moveInside(int width, int height) {
+		x = Math.max(0, Math.min(width - 1, x));
+		y = Math.max(0, Math.min(height - 1, y));
+	}
+
+	private int limit(int value) {
+		return Math.max(0, Math.min(100, value));
 	}
 
 	/**

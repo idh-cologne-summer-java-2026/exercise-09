@@ -2,6 +2,7 @@ package koeln.uni.idh.java1.session11.zoo.animals;
 
 public class Alpaca extends WalkingMammal {
 	public Alpaca() {
+		this.name = "Alma";
 		System.out.println("A new alpaca has been born.");
 	}
 	
