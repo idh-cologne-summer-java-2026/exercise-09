@@ -1,5 +1,6 @@
 package koeln.uni.idh.java1.session11.zoo.animals;
 
+import koeln.uni.idh.java1.session11.zoo.Main;
 import koeln.uni.idh.java1.session11.zoo.ui.Drawable;
 
 /**
@@ -36,6 +37,11 @@ public abstract class WalkingMammal implements Drawable {
 	 * 0 => top, 90 => right, 180 => bottom, 270 => left
 	 */
 	int direction = 0;
+
+	/**
+	 * Current hunger level from 0 (starving) to 100 (full)
+	 */
+	private int hunger = 60;
 
 	/**
 	 * The animal walks a single step in the direction in which it is looking.
@@ -80,6 +86,51 @@ public abstract class WalkingMammal implements Drawable {
 	 * 
 	 * @return A character used to represent the animal
 	 */
+	public void tickHunger() {
+		this.hunger = Math.max(0, this.hunger - 10);
+	}
+
+	public void feed() {
+		this.hunger = 100;
+	}
+
+	public void feed(int amount) {
+		this.hunger = Math.min(100, this.hunger + amount);
+	}
+
+	public boolean isHungry() {
+		return hunger < 30;
+	}
+
+	public String getHungerStatus() {
+		if (hunger <= 20) {
+			return "starving";
+		}
+		if (hunger <= 50) {
+			return "hungry";
+		}
+		if (hunger <= 80) {
+			return "content";
+		}
+		return "full";
+	}
+
+	public int getHunger() {
+		return hunger;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public static void main(String[] args) {
+		Main.main(args);
+	}
+
 	public abstract char getSymbol();
 
 	public int getX() {
