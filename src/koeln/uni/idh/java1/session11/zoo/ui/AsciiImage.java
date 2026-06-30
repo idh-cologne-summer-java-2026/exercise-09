@@ -1,13 +1,16 @@
 package koeln.uni.idh.java1.session11.zoo.ui;
 
-import koeln.uni.idh.java1.session11.zoo.animals.WalkingMammal;
-
 public class AsciiImage {
 
 	/**
 	 * The image itself, as ASCII-art
 	 */
 	private char[][] image;
+
+	/**
+	 * Tracks which cells are already occupied by an animal or tree.
+	 */
+	private boolean[][] occupied;
 
 	/**
 	 * Representation of a white pixel
@@ -29,6 +32,7 @@ public class AsciiImage {
 
 		// Initially, the image is empty
 		this.image = new char[height][width];
+		this.occupied = new boolean[height][width];
 		for (int h = 0; h < image.length; h++) {
 			for (int w = 0; w < image[0].length; w++) {
 				image[h][w] = white;
@@ -43,14 +47,19 @@ public class AsciiImage {
 	 * @param y The vertical position of the pixel
 	 */
 	public void dot(int x, int y) {
-		image[y][x] = black;
+		if (isInside(x, y)) {
+			image[y][x] = black;
+		}
 	}
 
-	public void dot(int x, int y, WalkingMammal wm) {
-		image[y][x] = wm.getSymbol();
+	public boolean place(int x, int y, Drawable drawable) {
+		if (!isInside(x, y) || occupied[y][x]) {
+			return false;
+		}
+		image[y][x] = drawable.getSymbol();
+		occupied[y][x] = true;
+		return true;
 	}
-
-
 
 	/**
 	 * Generate the image as a String. Used for printing it to the user.
@@ -79,5 +88,9 @@ public class AsciiImage {
 	 */
 	public int height() {
 		return image.length;
+	}
+
+	private boolean isInside(int x, int y) {
+		return x >= 0 && x < width() && y >= 0 && y < height();
 	}
 }
